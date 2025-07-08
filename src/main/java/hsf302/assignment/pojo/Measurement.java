@@ -1,9 +1,13 @@
 package hsf302.assignment.pojo;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "measurements")
+@Getter
+@Setter
 public class Measurement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +30,7 @@ public class Measurement {
 
     @Column(length = 500, name = "note")
     private String note;
+
 
     // Getters and Setters
 }

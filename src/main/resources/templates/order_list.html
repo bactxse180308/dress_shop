@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Danh sách đơn hàng</title>
+</head>
+<body>
+<h1>Đơn hàng của bạn</h1>
+
+<table border="1">
+  <thead>
+  <tr>
+    <th>Mã đơn</th>
+    <th>Ngày đặt</th>
+    <th>Trạng thái</th>
+    <th>Tổng tiền</th>
+    <th>Chi tiết</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="order : ${orders}">
+    <td th:text="${order.id}">1</td>
+    <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">Ngày</td>
+    <td th:text="${order.status}">Trạng thái</td>
+    <td th:text="${order.totalAmount}">0</td>
+    <td>
+      <a th:href="@{'/order/detail/' + ${order.id}}">Xem</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
