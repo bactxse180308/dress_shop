@@ -1,35 +1,42 @@
 package hsf302.assignment.pojo;
 
+import hsf302.assignment.Enum.OrderStatusEnum;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "orders")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date orderDate;
-
-    private String status;
-
-    private Double totalAmount;
-
-    @Column(columnDefinition = "NVARCHAR(MAX)")
-    private String shippingAddress;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "order_date", nullable = false)
+    private LocalDateTime orderDate = LocalDateTime.now();
+
+    @Column(name = "status", nullable = false)
+    private OrderStatusEnum status; // pending, processing, shipped, completed, cancelled
+
+    @Column(name = "total_amount", nullable = false)
+    private BigDecimal totalAmount;
+
+    @Column(name = "shipping_address", columnDefinition = "NVARCHAR(MAX)")
+    private String shippingAddress;
+
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
+
+    // Getters and Setters
 }

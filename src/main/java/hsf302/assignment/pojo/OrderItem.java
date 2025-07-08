@@ -1,21 +1,21 @@
 package hsf302.assignment.pojo;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "order_items")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    private Integer quantity;
-
-    private Double unitPrice;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
@@ -25,7 +25,14 @@ public class OrderItem {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne
-    @JoinColumn(name = "measurement_id")
-    private Measurement measurement;
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
+
+    @Column(name = "unit_price", nullable = false)
+    private BigDecimal unitPrice;
+
+    @OneToMany(mappedBy = "orderItem")
+    private List<OrderItemDecoration> orderItemDecorations;
+
+    // Getters and Setters
 }

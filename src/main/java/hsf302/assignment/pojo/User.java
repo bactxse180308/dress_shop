@@ -2,41 +2,40 @@ package hsf302.assignment.pojo;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.Date;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(unique = true)
     private String email;
 
-    private String passwordHash;
+    @Column(name = "password", nullable = false)
+    private String password;
 
+    @Column(name = "phone")
     private String phone;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "address")
     private String address;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
 
     @OneToMany(mappedBy = "user")
-    private List<Measurement> measurements;
-
-    @OneToMany(mappedBy = "user")
     private List<Review> reviews;
+
+    // Getters and Setters
 }

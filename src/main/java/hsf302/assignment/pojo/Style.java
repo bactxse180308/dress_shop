@@ -1,15 +1,16 @@
 package hsf302.assignment.pojo;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
 @Table(name = "styles")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class Style {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,9 +18,11 @@ public class Style {
 
     private String name;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
+    @Lob
     private String description;
 
     @OneToMany(mappedBy = "style")
     private List<Product> products;
+
+    // Getters and Setters
 }

@@ -1,13 +1,9 @@
 package hsf302.assignment.pojo;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
 @Table(name = "measurements")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Measurement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,9 +24,8 @@ public class Measurement {
     private Double hipDrop;
     private Double neckSize;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
+    @Column(length = 500, name = "note")
     private String note;
 
-    @OneToMany(mappedBy = "measurement")
-    private java.util.List<OrderItem> orderItems;
+    // Getters and Setters
 }
