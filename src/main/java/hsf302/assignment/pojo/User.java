@@ -1,5 +1,6 @@
 package hsf302.assignment.pojo;
 
+import hsf302.assignment.Enum.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
@@ -30,6 +31,9 @@ public class User {
     private String address;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "role")
+    private UserRoleEnum role;
 
     @OneToMany(mappedBy = "user")
     private List<Order> orders;

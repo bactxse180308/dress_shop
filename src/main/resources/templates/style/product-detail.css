@@ -1,0 +1,23 @@
+.main-product-image {
+    border: 1px solid #eee;
+    padding: 4px;
+}
+.thumb-image {
+    cursor: pointer;
+    border: 1px solid #ddd;
+}
+.thumb-image:hover {
+    border: 1px solid #000;
+}
+.color-image {
+    width: 50px;
+    height: 70px;
+    object-fit: cover;
+    cursor: pointer;
+}
+.size-btn {
+    min-width: 45px;
+}
+.quantity-group input {
+    max-width: 50px;
+}
