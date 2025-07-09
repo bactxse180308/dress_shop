@@ -15,6 +15,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 public class ProductController {
 
@@ -35,6 +43,23 @@ public class ProductController {
     public String showProductDetail(@PathVariable("id") Integer id, Model model) {
         Product product = productService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
+
+        Path folderPath = Paths.get("uploads", String.valueOf(id));
+        List<String> imageFiles = new ArrayList<>();
+
+        if (Files.exists(folderPath) && Files.isDirectory(folderPath)) {
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(folderPath)) {
+                for (Path entry : stream) {
+                    if (Files.isRegularFile(entry)) {
+                        imageFiles.add(entry.getFileName().toString());
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        model.addAttribute("imageFiles", imageFiles);
         model.addAttribute("product", product);
         return "product-detail";
     }
