@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Chi tiết đơn hàng</title>
+  <meta charset="UTF-8"/>
 </head>
 <body>
 <h1>Chi tiết đơn hàng #<span th:text="${order.id}">0</span></h1>
@@ -10,13 +11,13 @@
 <p><b>Trạng thái:</b> <span th:text="${order.status}"></span></p>
 <p><b>Tổng tiền:</b> <span th:text="${order.totalAmount}"></span></p>
 
-<h2>Sản phẩm</h2>
 <table border="1">
   <thead>
   <tr>
     <th>Sản phẩm</th>
     <th>Số lượng</th>
     <th>Giá</th>
+    <th>Thành tiền</th>
   </tr>
   </thead>
   <tbody>
@@ -24,11 +25,11 @@
     <td th:text="${item.product.name}">Tên</td>
     <td th:text="${item.quantity}">1</td>
     <td th:text="${item.product.price}">0</td>
+    <td th:text="${#numbers.formatDecimal(item.product.price * item.quantity,1,'COMMA',2,'POINT')}">0</td>
   </tr>
   </tbody>
 </table>
 
-<a th:href="@{'/order/list?userId=' + ${order.user.id}}">Quay lại danh sách</a>
-
+<a th:href="@{'/order/list?userId=' + ${order.user.id}}">Quay lại danh sách đơn hàng</a>
 </body>
 </html>

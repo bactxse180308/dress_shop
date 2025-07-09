@@ -1,20 +1,18 @@
 package hsf302.assignment.controller;
 
-import org.springframework.ui.Model;
 import hsf302.assignment.pojo.Measurement;
 import hsf302.assignment.pojo.Product;
 import hsf302.assignment.repository.ProductRepository;
 import hsf302.assignment.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/cart")
 public class CartController {
+
     @Autowired
     private CartService cartService;
 
@@ -32,19 +30,27 @@ public class CartController {
     public String addToCart(
             @RequestParam Integer productId,
             @RequestParam int quantity,
-            @RequestParam(required = false) Long measurementId) {
-
+            @RequestParam(required = false) String size
+    ) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
         Measurement measurement = null;
-        if (measurementId != null) {
+
+        // Nếu có size, tạo Measurement và lưu size vào note
+        if (size != null && !size.isEmpty()) {
             measurement = new Measurement();
-            measurement.setId(measurementId.intValue()); // Hoặc load Measurement từ DB nếu bạn lưu sẵn
+            measurement.setNote(size);
         }
 
         cartService.addToCart(product, quantity, measurement);
 
+        return "redirect:/cart";
+    }
+
+    @PostMapping("/remove")
+    public String removeItem(@RequestParam int index) {
+        cartService.getCartItems().remove(index);
         return "redirect:/cart";
     }
 

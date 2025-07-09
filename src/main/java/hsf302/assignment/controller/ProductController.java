@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class ProductController {
+public class    ProductController {
 
     @Autowired private ProductService productService;
     @Autowired private FabricService fabricService;
@@ -87,6 +87,7 @@ public class ProductController {
         }
         return "redirect:/admin/products";
     }
+
 
     @GetMapping("/admin/products/delete/{id}")
     public String deleteProduct(@PathVariable("id") Integer id) {

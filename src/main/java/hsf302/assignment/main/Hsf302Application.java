@@ -4,6 +4,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
@@ -20,5 +22,14 @@ public class Hsf302Application {
     public static void main(String[] args) {
         SpringApplication.run(Hsf302Application.class, args);
     }
+    @Bean
+    public CommandLineRunner showMappings(ApplicationContext ctx) {
+        return args -> {
+            var mapping = ctx.getBean(org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping.class);
+            mapping.getHandlerMethods().forEach((k, v) -> System.out.println(k));
+        };
+    }
+
+
 }
 
