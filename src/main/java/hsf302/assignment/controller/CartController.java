@@ -30,7 +30,7 @@ public class CartController {
 
     @PostMapping("/add")
     public String addToCart(
-            @RequestParam Long productId,
+            @RequestParam Integer productId,
             @RequestParam int quantity,
             @RequestParam(required = false) Long measurementId) {
 

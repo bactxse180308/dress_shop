@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Form Sản Phẩm</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+  <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
+  <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+
+  <h1 th:if="${product.id == null}">Thêm Sản Phẩm Mới</h1>
+  <h1 th:unless="${product.id == null}">Chỉnh Sửa Sản Phẩm</h1>
+
+  <form th:action="@{/admin/products/save}" th:object="${product}" method="post" enctype="multipart/form-data">
+    <input type="hidden" th:field="*{id}"/>
+
+    <div class="mb-3">
+      <label for="name" class="form-label">Tên Sản Phẩm:</label>
+      <input type="text" id="name" th:field="*{name}" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Mô Tả:</label>
+      <textarea id="description" th:field="*{description}" class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="price" class="form-label">Giá (VNĐ):</label>
+        <input type="number" id="price" th:field="*{price}" class="form-control" required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="imageFile" class="form-label">Ảnh Sản Phẩm:</label>
+        <input type="file" id="imageFile" name="imageFile" class="form-control">
+        <small class="form-text text-muted">
+          Chỉ chấp nhận các tệp ảnh: .jpg, .png, .gif, .bmp
+        </small>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="fabric" class="form-label">Chất Liệu Vải:</label>
+        <select id="fabric" th:field="*{fabric.id}" class="form-select" required>
+          <option th:each="fab : ${fabrics}" th:value="${fab.id}" th:text="${fab.name}"></option>
+        </select>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="style" class="form-label">Kiểu Dáng:</label>
+        <select id="style" th:field="*{style.id}" class="form-select" required>
+          <option th:each="st : ${styles}" th:value="${st.id}" th:text="${st.name}"></option>
+        </select>
+      </div>
+    </div>
+
+    <hr>
+    <h4>Thông Tin Hàng Có Sẵn</h4>
+    <input type="hidden" th:field="*{readyMadeDress.productId}"/>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="size" class="form-label">Size:</label>
+        <select id="size" th:field="*{readyMadeDress.size}" class="form-select">
+          <option value="">-- Chọn Size --</option>
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+        </select>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="quantityInStock" class="form-label">Số Lượng Trong Kho:</label>
+        <input type="number" id="quantityInStock" th:field="*{readyMadeDress.quantityInStock}" class="form-control">
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu Sản Phẩm</button>
+    <a th:href="@{/admin/products}" class="btn btn-secondary">Hủy</a>
+  </form>
+</div>
+</body>
+</html>

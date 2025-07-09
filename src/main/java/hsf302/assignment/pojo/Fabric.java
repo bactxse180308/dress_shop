@@ -17,7 +17,7 @@ public class Fabric {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "name")
+    @Column(name = "name", columnDefinition = "NVARCHAR(100)")
     private String name;
 
     @Column(columnDefinition = "NVARCHAR(MAX)", name = "description")

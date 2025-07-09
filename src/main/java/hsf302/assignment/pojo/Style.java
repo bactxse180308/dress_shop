@@ -15,7 +15,7 @@ public class Style {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
+    @Column(name = "name", columnDefinition = "NVARCHAR(100)")
     private String name;
 
     @Lob
