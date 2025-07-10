@@ -138,12 +138,13 @@
         <div th:each="product : ${products}" class="col-md-4 mb-4 d-flex">
             <div class="product-card w-100 d-flex flex-column">
                 <div class="product-image-container position-relative">
-                    <img th:src="${product.imageUrl}" class="product-image" alt="Product Image">
+                    <img th:src="@{'/uploads/' + ${product.imageUrl}}" class="card-img-top" alt="Product Image" >
                     <!-- Nút Mua ngay POST -->
                     <a th:href="@{/products/{id}(id=${product.id})}" class="btn-buy-now">
                         Mua ngay <i class="bi bi-cart"></i>
                     </a>
-
+                    <img th:src="@{'/uploads/' + ${product.imageUrl}}" class="card-img-top" alt="Product Image" >
+                    <a th:href="@{/cart/add(productId=${product.id})}" class="btn-buy-now">Mua ngay <i class="bi bi-cart"></i></a>
                 </div>
                 <div class="product-name">
                     <a th:href="@{/products/{id}(id=${product.id})}">
