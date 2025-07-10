@@ -16,7 +16,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         "hsf302.assignment.controller",
         "hsf302.assignment.service",
         "hsf302.assignment.pojo",
-        "hsf302.assignment.repository"
+        "hsf302.assignment.repository",
+        "hsf302.assignment.config"
 })
 public class Hsf302Application {
     public static void main(String[] args) {

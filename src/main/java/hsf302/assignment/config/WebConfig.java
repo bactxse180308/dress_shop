@@ -16,6 +16,6 @@ public class WebConfig implements WebMvcConfigurer {
         // Cú pháp này đơn giản và hoạt động ổn định trên mọi hệ điều hành.
         // "file:./" nghĩa là "lấy từ thư mục hiện tại của ứng dụng"
         registry.addResourceHandler("/" + uploadDir + "/**")
-                .addResourceLocations("file:./" + uploadDir + "/");
+                .addResourceLocations("file:" + uploadDir + "/");
     }
 }
