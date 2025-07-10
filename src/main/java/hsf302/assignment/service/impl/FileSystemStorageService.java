@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -39,11 +40,12 @@ public class FileSystemStorageService implements StorageService {
         if (file.isEmpty()) {
             return null;
         }
-
+        System.out.println("Uploaded file content type: " + file.getContentType());
         // 1. Kiểm tra loại file (đã được cải tiến)
         if (!isImageFile(file)) {
             throw new RuntimeException("Lỗi: Chỉ cho phép upload file ảnh có định dạng .jpg, .jpeg, .png, .gif, .bmp");
         }
+
 
         // 2. Chuẩn hóa tên file
         String originalFilename = file.getOriginalFilename();
@@ -51,9 +53,10 @@ public class FileSystemStorageService implements StorageService {
         String uniqueFilename = System.currentTimeMillis() + "_" + sanitizedFilename;
 
         try (InputStream inputStream = file.getInputStream()) {
-            Files.copy(inputStream, this.rootLocation.resolve(uniqueFilename),
-                    StandardCopyOption.REPLACE_EXISTING);
-            return uniqueFilename;
+            Files.copy(inputStream, this.rootLocation.resolve(uniqueFilename), StandardCopyOption.REPLACE_EXISTING);
+
+            String publicPath = "/uploads/" + uniqueFilename;
+            return publicPath;
         } catch (IOException e) {
             throw new RuntimeException("Failed to store file " + uniqueFilename, e);
         }
@@ -61,20 +64,32 @@ public class FileSystemStorageService implements StorageService {
 
     // ===== PHƯƠNG THỨC ĐÃ ĐƯỢC CẢI TIẾN =====
     private boolean isImageFile(MultipartFile file) {
-        if (file == null || file.getContentType() == null) {
-            return false;
-        }
+        if (file == null) return false;
 
-        // Tạo một danh sách các ContentType ảnh được chấp nhận
-        List<String> allowedTypes = Arrays.asList(
-                "image/jpeg",
-                "image/png",
-                "image/gif",
-                "image/bmp"
+        String contentType = file.getContentType();
+        String filename = file.getOriginalFilename();
+
+        List<String> allowedContentTypes = Arrays.asList(
+                "image/jpeg", "image/png", "image/gif", "image/bmp"
+        );
+        List<String> allowedExtensions = Arrays.asList(
+                ".jpg", ".jpeg", ".png", ".gif", ".bmp"
         );
 
-        // Kiểm tra xem ContentType của file có nằm trong danh sách không
-        return allowedTypes.contains(file.getContentType().toLowerCase());
+        boolean typeOk = contentType != null && allowedContentTypes.contains(contentType.toLowerCase());
+
+        boolean extOk = false;
+        if (filename != null) {
+            String lowered = filename.toLowerCase();
+            for (String ext : allowedExtensions) {
+                if (lowered.endsWith(ext)) {
+                    extOk = true;
+                    break;
+                }
+            }
+        }
+
+        return typeOk || extOk; // chấp nhận nếu 1 trong 2 đúng
     }
 
     private String sanitizeFilename(String filename) {
@@ -95,5 +110,19 @@ public class FileSystemStorageService implements StorageService {
                 .replaceAll("\\s+", "-")
                 .replaceAll("[^a-z0-9\\-]", "");
         return slug + extension;
+    }
+
+
+    /// THEM NHIEU ANH
+    @Override
+    public List<String> store(MultipartFile[] files) {
+        List<String> generatedFilenames = new ArrayList<>();
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                String filename = this.store(file); // Gọi lại hàm store 1 file
+                generatedFilenames.add(filename);
+            }
+        }
+        return generatedFilenames;
     }
 }

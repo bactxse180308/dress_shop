@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import hsf302.assignment.pojo.ProductImage;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-public class ProductController {
+public class    ProductController {
 
     @Autowired private ProductService productService;
     @Autowired private FabricService fabricService;
@@ -44,22 +45,6 @@ public class ProductController {
         Product product = productService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
 
-        Path folderPath = Paths.get("uploads", String.valueOf(id));
-        List<String> imageFiles = new ArrayList<>();
-
-        if (Files.exists(folderPath) && Files.isDirectory(folderPath)) {
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(folderPath)) {
-                for (Path entry : stream) {
-                    if (Files.isRegularFile(entry)) {
-                        imageFiles.add(entry.getFileName().toString());
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        model.addAttribute("imageFiles", imageFiles);
         model.addAttribute("product", product);
         return "product-detail";
     }
@@ -90,21 +75,25 @@ public class ProductController {
 
     @PostMapping("/admin/products/save")
     public String saveProduct(@ModelAttribute("product") Product product,
-                              @RequestParam("imageFile") MultipartFile imageFile,
-                              RedirectAttributes redirectAttributes) { // Thêm RedirectAttributes
+                              @RequestParam("imageFiles") MultipartFile[] imageFiles, // Sửa tên và kiểu
+                              RedirectAttributes redirectAttributes) {
         try {
-            if (!imageFile.isEmpty()) {
-                String fileName = storageService.store(imageFile);
-                product.setImageUrl(fileName);
+            // Xử lý upload nhiều file
+            for (MultipartFile file : imageFiles) {
+                if (!file.isEmpty()) {
+                    String fileName = storageService.store(file);
+                    ProductImage productImage = new ProductImage();
+                    productImage.setImageUrl(fileName);
+                    productImage.setProduct(product); // Thiết lập quan hệ
+                    product.getImages().add(productImage); // Thêm vào danh sách của product
+                }
             }
+
             productService.save(product);
             redirectAttributes.addFlashAttribute("successMessage", "Lưu sản phẩm thành công!");
         } catch (RuntimeException e) {
-            // Bắt lỗi từ StorageService và gửi thông báo lại cho form
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            // Trả lại các giá trị người dùng đã nhập để họ không phải nhập lại
             redirectAttributes.addFlashAttribute("product", product);
-            // Nếu là edit thì phải trả lại id
             if (product.getId() != null) {
                 return "redirect:/admin/products/edit/" + product.getId();
             }
@@ -112,6 +101,7 @@ public class ProductController {
         }
         return "redirect:/admin/products";
     }
+
 
     @GetMapping("/admin/products/delete/{id}")
     public String deleteProduct(@PathVariable("id") Integer id) {
