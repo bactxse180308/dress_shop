@@ -32,10 +32,12 @@
         <input type="number" id="price" th:field="*{price}" class="form-control" required>
       </div>
       <div class="col-md-6 mb-3">
-        <label for="imageFile" class="form-label">Ảnh Sản Phẩm:</label>
-        <input type="file" id="imageFile" name="imageFile" class="form-control">
+        <label for="imageFiles" class="form-label">Ảnh Sản Phẩm:</label>
+        <!-- Sửa name="imageFiles" và thêm "multiple" -->
+        <input type="file" id="imageFiles" name="imageFiles" class="form-control" multiple>
+
         <small class="form-text text-muted">
-          Chỉ chấp nhận các tệp ảnh: .jpg, .png, .gif, .bmp
+          Chấp nhận nhiều ảnh: .jpg, .png, .gif, .bmp
         </small>
       </div>
     </div>
@@ -80,4 +82,4 @@
   </form>
 </div>
 </body>
-</html>
+</html>x
