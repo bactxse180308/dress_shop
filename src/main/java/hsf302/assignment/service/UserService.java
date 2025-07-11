@@ -10,4 +10,8 @@ public interface UserService {
     User createUser(User user);
     User updateUser(Integer id, User userDetails);
     void deleteUser(Integer id);
+    boolean existsByEmail(String email);
+    User findByEmailAndPassword(String email, String password);
+
+
 }
