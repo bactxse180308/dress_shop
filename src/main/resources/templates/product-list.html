@@ -90,25 +90,21 @@
                 <div class="product-card w-100 d-flex flex-column">
                     <div class="product-image-container position-relative">
 
-                        <!-- ===== PHẦN SỬA LỖI QUAN TRỌNG NHẤT NẰM Ở ĐÂY ===== -->
-
-                        <!-- 1. Kiểm tra xem danh sách 'images' của sản phẩm có ảnh nào không -->
+                        <!-- Ảnh đại diện -->
                         <th:block th:if="${!product.images.isEmpty()}">
-                            <!-- Nếu CÓ ảnh, thì lấy ảnh đầu tiên (vị trí 0) làm ảnh đại diện -->
                             <img th:src="@{${product.images[0].imageUrl}}" class="product-image" alt="Product Image">
                         </th:block>
-
-                        <!-- 2. Nếu KHÔNG có ảnh nào trong danh sách -->
                         <th:block th:if="${product.images.isEmpty()}">
-                            <!-- Hiển thị một ảnh mặc định để không bị vỡ layout -->
                             <img th:src="@{/images/placeholder.jpg}" class="product-image" alt="No Image Available">
                         </th:block>
 
-                        <!-- ==================================================== -->
-
-                        <a th:href="@{/cart/add(productId=${product.id})}" class="btn-buy-now">Mua ngay <i
-                                class="bi bi-cart"></i></a>
+                        <!-- Nút Mua ngay chuyển tới trang chi tiết sản phẩm -->
+                        <a th:href="@{/products/{id}(id=${product.id})}" class="btn-buy-now">
+                            Mua ngay <i class="bi bi-cart"></i>
+                        </a>
                     </div>
+
+
                     <div class="product-name">
                         <a th:href="@{/products/{id}(id=${product.id})}">
                             <span th:text="${product.name}"></span>
