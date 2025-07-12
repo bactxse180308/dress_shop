@@ -6,11 +6,9 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @Controller
 @RequestMapping("/admin")
 public class DashboardController {
@@ -39,6 +37,31 @@ public class DashboardController {
             model.addAttribute("isAdmin", false);
         }
 
-        return "admin/dashboard";  // Đảm bảo trả về đúng template
+        return "admin/dashboard";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editUser(@PathVariable("id") Integer id, Model model) {
+        User user = userService.getUserById(id);
+        model.addAttribute("user", user);
+        return "admin/edit_user";  // Trang để sửa thông tin người dùng
+    }
+
+    @PostMapping("/update/{id}")
+    public String updateUser(@PathVariable("id") Integer id, @ModelAttribute("user") User user) {
+        userService.updateUser(id, user);
+        return "redirect:/admin/dashboard";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteUser(@PathVariable("id") Integer id) {
+        userService.deleteUser(id);
+        return "redirect:/admin/dashboard";
+    }
+    @PostMapping("/logout")
+    public String logout(HttpSession session) {
+        // Xóa session khi logout
+        session.invalidate();
+        return "redirect:/auth/login";  // Chuyển hướng về trang login
     }
 }

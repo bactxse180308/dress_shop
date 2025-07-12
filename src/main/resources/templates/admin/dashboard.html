@@ -2,26 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <title>Danh sách người dùng</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
+<div class="container">
+    <div class="sidebar">
+        <h2>Admin Page</h2>
+        <ul>
+            <li><a href="/admin/dashboard">Danh sách người dùng</a></li>
+            <li><a href="#">Mục khác</a></li>
+        </ul>
+    </div>
 
-<!-- Sidebar / Navigation -->
-<div class="sidebar">
-    <h3>Dashboard</h3>
-    <ul>
-        <li><a href="#user-list" id="user-list-link">Danh sách người dùng</a></li>
-        <li><a href="#other-section">Mục khác</a></li>
-        <!-- Các mục khác nếu có -->
-    </ul>
-</div>
-
-<!-- Main Content -->
-<div class="content">
-    <div id="user-list-section" class="section">
+    <div class="content">
         <h2>Danh sách người dùng</h2>
-        <table class="user-table">
+        <table>
             <thead>
             <tr>
                 <th>ID</th>
@@ -41,27 +37,48 @@
                 <td th:text="${user.address}"></td>
                 <td>
                     <a th:href="@{/admin/edit/{id}(id=${user.id})}">Chỉnh sửa</a> |
-                    <a th:href="@{/admin/delete/{id}(id=${user.id})}">Xóa</a>
+                    <button class="deleteBtn" th:data-id="${user.id}">Xóa</button>
                 </td>
             </tr>
             </tbody>
         </table>
-    </div>
 
-    <!-- Other sections for the Dashboard -->
-    <div id="other-section" class="section">
-        <h2>Mục khác</h2>
-        <p>Chưa có dữ liệu cho mục này.</p>
+        <!-- Modal Xóa -->
+        <div id="deleteModal" class="modal">
+            <div class="modal-content">
+                <h4>Bạn có chắc chắn muốn xóa người dùng này?</h4>
+                <button id="confirmDelete" class="btn btn-danger">OK</button>
+                <button id="cancelDelete" class="btn btn-secondary">Hủy</button>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- Form Logout -->
+<form action="/admin/logout" method="post" style="display:inline;">
+    <button type="submit">Logout</button>
+</form>
+
 <script>
-    // JavaScript để chuyển đổi giữa các mục
-    document.getElementById("user-list-link").addEventListener("click", function() {
-        document.getElementById("user-list-section").style.display = "block";
-        document.getElementById("other-section").style.display = "none";
+    // Hiển thị modal khi nhấn nút Xóa
+    document.querySelectorAll('.deleteBtn').forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.getAttribute('data-id');
+
+            // Hiển thị modal xác nhận
+            document.getElementById('deleteModal').style.display = 'block';
+
+            // Khi nhấn OK, thực hiện xóa
+            document.getElementById('confirmDelete').addEventListener('click', function() {
+                window.location.href = '/admin/delete/' + userId;  // Xóa người dùng
+            });
+
+            // Nếu nhấn Hủy, đóng modal
+            document.getElementById('cancelDelete').addEventListener('click', function() {
+                document.getElementById('deleteModal').style.display = 'none';
+            });
+        });
     });
 </script>
-
 </body>
 </html>
