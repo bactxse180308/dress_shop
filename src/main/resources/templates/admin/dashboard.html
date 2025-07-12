@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<!-- Sidebar / Navigation -->
+<div class="sidebar">
+    <h3>Dashboard</h3>
+    <ul>
+        <li><a href="#user-list" id="user-list-link">Danh sách người dùng</a></li>
+        <li><a href="#other-section">Mục khác</a></li>
+        <!-- Các mục khác nếu có -->
+    </ul>
+</div>
+
+<!-- Main Content -->
+<div class="content">
+    <div id="user-list-section" class="section">
+        <h2>Danh sách người dùng</h2>
+        <table class="user-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
+                <th>Địa chỉ</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.phone}"></td>
+                <td th:text="${user.address}"></td>
+                <td>
+                    <a th:href="@{/admin/edit/{id}(id=${user.id})}">Chỉnh sửa</a> |
+                    <a th:href="@{/admin/delete/{id}(id=${user.id})}">Xóa</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Other sections for the Dashboard -->
+    <div id="other-section" class="section">
+        <h2>Mục khác</h2>
+        <p>Chưa có dữ liệu cho mục này.</p>
+    </div>
+</div>
+
+<script>
+    // JavaScript để chuyển đổi giữa các mục
+    document.getElementById("user-list-link").addEventListener("click", function() {
+        document.getElementById("user-list-section").style.display = "block";
+        document.getElementById("other-section").style.display = "none";
+    });
+</script>
+
+</body>
+</html>

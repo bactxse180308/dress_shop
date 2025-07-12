@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Đăng ký</title>
-  <link rel="stylesheet" th:href="@{/login.css}"> <!-- Hoặc @{/register.css} nếu bạn muốn dùng riêng -->
+  <link rel="stylesheet" th:href="@{/css/login.css}"> <!-- Hoặc @{/register.css} nếu bạn muốn dùng riêng -->
 </head>
 <body>
 <div class="login-container">
@@ -23,11 +23,6 @@
       <div class="form-group">
         <label for="password">Mật khẩu:</label>
         <input type="password" id="password" name="password" required>
-      </div>
-
-      <div class="form-group">
-        <label for="role">Vai trò (USER hoặc ADMIN):</label>
-        <input type="text" id="role" name="role" placeholder="USER" required>
       </div>
 
       <button type="submit">Đăng ký</button>

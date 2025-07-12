@@ -3,8 +3,11 @@ package hsf302.assignment.pojo;
 import hsf302.assignment.Enum.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -21,7 +24,7 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password_hash", nullable = false)
     private String password;
 
     @Column(name = "phone")
@@ -32,14 +35,19 @@ public class User {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private UserRoleEnum role;
+
 
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
 
     @OneToMany(mappedBy = "user")
     private List<Review> reviews;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Measurement> measurements = new LinkedHashSet<>();
 
     // Getters and Setters
 }
