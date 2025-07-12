@@ -1,34 +1,43 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+  <meta charset="UTF-8">
   <title>Chi tiết đơn hàng</title>
+  <link rel="stylesheet" th:href="@{/style/order_detail.css}" type="text/css">
 </head>
-<body>
-<h1>Chi tiết đơn hàng #<span th:text="${order.id}">0</span></h1>
+<body class="container">
 
-<p><b>Ngày đặt:</b> <span th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
-<p><b>Trạng thái:</b> <span th:text="${order.status}"></span></p>
-<p><b>Tổng tiền:</b> <span th:text="${order.totalAmount}"></span></p>
+<div class="order-details">
+  <h1 class="order-title">Chi tiết đơn hàng #<span th:text="${order.id}">0</span></h1>
 
-<h2>Sản phẩm</h2>
-<table border="1">
-  <thead>
-  <tr>
-    <th>Sản phẩm</th>
-    <th>Số lượng</th>
-    <th>Giá</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="item : ${order.orderItems}">
-    <td th:text="${item.product.name}">Tên</td>
-    <td th:text="${item.quantity}">1</td>
-    <td th:text="${item.product.price}">0</td>
-  </tr>
-  </tbody>
-</table>
+  <div class="order-info">
+    <p><strong>Ngày đặt:</strong> <span th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">01/01/2025</span></p>
+    <p><strong>Trạng thái:</strong> <span th:text="${order.status}">Đã giao</span></p>
+    <p><strong>Tổng tiền:</strong> <span class="total-price" th:text="${order.totalAmount}">0</span></p>
+  </div>
 
-<a th:href="@{'/order/list?userId=' + ${order.user.id}}">Quay lại danh sách</a>
+  <h2 class="section-title">Danh sách sản phẩm</h2>
+  <table class="product-table">
+    <thead>
+    <tr>
+      <th>Sản phẩm</th>
+      <th>Số lượng</th>
+      <th>Giá</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${order.orderItems}">
+      <td th:text="${item.product.name}">Tên</td>
+      <td th:text="${item.quantity}">1</td>
+      <td th:text="${item.product.price}">0</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="back-link">
+    <a th:href="@{'/order/list?userId=' + ${order.user.id}}">← Quay lại danh sách đơn hàng</a>
+  </div>
+</div>
 
 </body>
 </html>
