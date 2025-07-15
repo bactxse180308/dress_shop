@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title layout:title-pattern="$CONTENT_TITLE - MySite">Trang chủ</title>
+</head>
+
+<th:block layout:fragment="css">
+    <style>
+        /* Hero Banner */
+        .hero-banner {
+            position: relative;
+            height: 500px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 15px;
+            margin-bottom: 4rem;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 2;
+        }
+
+        .hero-banner h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-banner p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .btn-hero {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Section Styles */
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+            color: #333;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .section {
+            margin-bottom: 5rem;
+        }
+
+        /* Product Card */
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .product-tag {
+            background: #f8f9fa;
+            color: #666;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .product-tag.style {
+            background: #e7f3ff;
+            color: #0066cc;
+            border-color: #b3d9ff;
+        }
+
+        .product-tag.fabric {
+            background: #f0f8e7;
+            color: #4d7c0f;
+            border-color: #d1e7dd;
+        }
+
+        /* Category Sections */
+        .category-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .category-header h3 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        /* Reviews Section */
+        .review-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .review-card::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 4rem;
+            color: #667eea;
+            font-family: serif;
+        }
+
+        .review-content {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .review-author {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .review-product {
+            color: #667eea;
+            font-size: 0.9rem;
+        }
+
+        .review-rating {
+            color: #ffc107;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-banner h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .product-info {
+                padding: 1rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+        <div class="hero-content">
+            <h1>Thời Trang Hiện Đại</h1>
+            <p>Khám phá bộ sưu tập thời trang mới nhất với chất lượng cao cấp</p>
+            <button class="btn btn-hero">Khám Phá Ngay</button>
+        </div>
+    </section>
+
+    <!-- Sản phẩm mới -->
+    <section class="section">
+        <h2 class="section-title">Sản Phẩm Mới</h2>
+        <div class="row">
+            <div class="col-md-3 col-sm-6" th:each="product : ${newProducts}">
+                <div class="product-card">
+                    <th:block th:if="${!product.images.isEmpty()}">
+                        <img th:src="@{${product.images[0].imageUrl}}" class="product-image" alt="Product Image">
+                    </th:block>
+                    <div class="product-info">
+                        <h5 class="product-name" th:text="${product.name}">Tên sản phẩm</h5>
+                        <div class="product-price" th:text="${#numbers.formatCurrency(product.price)}">999,000 VND</div>
+                        <div class="product-tags">
+                            <span class="product-tag style" th:if="${product.style}" th:text="${product.style.name}">Style</span>
+                            <span class="product-tag fabric" th:if="${product.fabric}" th:text="${product.fabric.name}">Fabric</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Sản phẩm theo chất liệu -->
+    <section class="section">
+        <h2 class="section-title">Sản Phẩm Theo Chất Liệu</h2>
+        <div th:each="fabricGroup : ${productsByFabric}">
+            <div class="category-header">
+                <h3 th:text="${fabricGroup.key}">Tên Chất Liệu</h3>
+            </div>
+            <div class="row">
+                <div class="col-md-3 col-sm-6" th:each="product : ${fabricGroup.value}">
+                    <div class="product-card">
+                        <img th:src="${product.images != null and not #lists.isEmpty(product.images)} ? ${product.images[0].url} : '/images/placeholder.jpg'"
+                             th:alt="${product.name}" class="product-image">
+                        <div class="product-info">
+                            <h5 class="product-name" th:text="${product.name}">Tên sản phẩm</h5>
+                            <div class="product-price" th:text="${#numbers.formatCurrency(product.price)}">999,000 VND</div>
+                            <div class="product-tags">
+                                <span class="product-tag style" th:if="${product.style}" th:text="${product.style.name}">Style</span>
+                                <span class="product-tag fabric" th:if="${product.fabric}" th:text="${product.fabric.name}">Fabric</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Đánh giá nổi bật -->
+    <section class="section">
+        <h2 class="section-title">Đánh Giá Nổi Bật</h2>
+        <div class="row">
+            <div class="col-md-4" th:each="review : ${featuredReviews}">
+                <div class="review-card">
+                    <div class="review-rating">
+                        <span th:each="star : ${#numbers.sequence(1, review.rating)}">★</span>
+                        <span th:each="star : ${#numbers.sequence(review.rating + 1, 5)}">☆</span>
+                    </div>
+                    <div class="review-content" th:text="${review.content}">
+                        Sản phẩm rất tốt, chất lượng vượt mong đợi. Tôi rất hài lòng với lần mua hàng này.
+                    </div>
+                    <div class="review-author" th:text="${review.customerName}">Nguyễn Văn A</div>
+                    <div class="review-product">
+                        Sản phẩm: <span th:text="${review.product.name}">Tên sản phẩm</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block layout:fragment="javascript">
+    <script>
+        // Smooth scrolling for hero button
+        document.querySelector('.btn-hero').addEventListener('click', function() {
+            document.querySelector('.section').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+
+        // Lazy loading for images
+        const images = document.querySelectorAll('.product-image');
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.classList.remove('loading-shimmer');
+                    observer.unobserve(img);
+                }
+            });
+        });
+
+        images.forEach(img => {
+            img.classList.add('loading-shimmer');
+            imageObserver.observe(img);
+        });
+
+        // Add to cart functionality (placeholder)
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Redirect to product detail page
+                console.log('Navigate to product detail');
+            });
+        });
+    </script>
+</th:block>
+</html>

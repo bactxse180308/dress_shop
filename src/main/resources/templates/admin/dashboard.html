@@ -1,80 +1,75 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/adminlayout}" lang="vi">
 <head>
     <meta charset="UTF-8">
     <title>Danh sách người dùng</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-<div class="container">
-    <div class="sidebar">
-        <h2>Admin Page</h2>
-        <ul>
-            <li><a href="/admin/dashboard">Danh sách người dùng</a></li>
-            <li><a href="#">Mục khác</a></li>
-        </ul>
-    </div>
+<div layout:fragment="content">
+    <div class="container">
+        <div class="content">
+            <h2>Danh sách người dùng</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên</th>
+                    <th>Email</th>
+                    <th>Số điện thoại</th>
+                    <th>Địa chỉ</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.name}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.phone}"></td>
+                    <td th:text="${user.address}"></td>
+                    <td>
+                        <a th:href="@{/admin/edit/{id}(id=${user.id})}">Chỉnh sửa</a> |
+                        <button class="deleteBtn" th:data-id="${user.id}">Xóa</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
 
-    <div class="content">
-        <h2>Danh sách người dùng</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Tên</th>
-                <th>Email</th>
-                <th>Số điện thoại</th>
-                <th>Địa chỉ</th>
-                <th>Thao tác</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="user : ${users}">
-                <td th:text="${user.id}"></td>
-                <td th:text="${user.name}"></td>
-                <td th:text="${user.email}"></td>
-                <td th:text="${user.phone}"></td>
-                <td th:text="${user.address}"></td>
-                <td>
-                    <a th:href="@{/admin/edit/{id}(id=${user.id})}">Chỉnh sửa</a> |
-                    <button class="deleteBtn" th:data-id="${user.id}">Xóa</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
-        <!-- Modal Xóa -->
-        <div id="deleteModal" class="modal">
-            <div class="modal-content">
-                <h4>Bạn có chắc chắn muốn xóa người dùng này?</h4>
-                <button id="confirmDelete" class="btn btn-danger">OK</button>
-                <button id="cancelDelete" class="btn btn-secondary">Hủy</button>
+            <!-- Modal Xóa -->
+            <div id="deleteModal" class="modal">
+                <div class="modal-content">
+                    <h4>Bạn có chắc chắn muốn xóa người dùng này?</h4>
+                    <button id="confirmDelete" class="btn btn-danger">OK</button>
+                    <button id="cancelDelete" class="btn btn-secondary">Hủy</button>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Form Logout -->
+    <form action="/admin/logout" method="post" style="display:inline;">
+        <button type="submit">Logout</button>
+    </form>
 </div>
-
-<!-- Form Logout -->
-<form action="/admin/logout" method="post" style="display:inline;">
-    <button type="submit">Logout</button>
-</form>
-
 <script>
     // Hiển thị modal khi nhấn nút Xóa
     document.querySelectorAll('.deleteBtn').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             const userId = this.getAttribute('data-id');
 
             // Hiển thị modal xác nhận
             document.getElementById('deleteModal').style.display = 'block';
 
             // Khi nhấn OK, thực hiện xóa
-            document.getElementById('confirmDelete').addEventListener('click', function() {
+            document.getElementById('confirmDelete').addEventListener('click', function () {
                 window.location.href = '/admin/delete/' + userId;  // Xóa người dùng
             });
 
             // Nếu nhấn Hủy, đóng modal
-            document.getElementById('cancelDelete').addEventListener('click', function() {
+            document.getElementById('cancelDelete').addEventListener('click', function () {
                 document.getElementById('deleteModal').style.display = 'none';
             });
         });

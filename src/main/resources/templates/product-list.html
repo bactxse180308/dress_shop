@@ -85,6 +85,48 @@
 <div layout:fragment="content">
     <div class="container my-5">
         <h1 class="mb-4 text-center">Váy Công Sở</h1>
+        <form class="row g-3 mb-4" method="get" th:action="@{/products}">
+            <div class="col-md-3">
+                <input type="text" class="form-control" name="name" placeholder="Tìm theo tên"
+                       th:value="${param.name}">
+            </div>
+
+            <div class="col-md-2">
+                <select class="form-select" name="styleId">
+                    <option value="">-- Kiểu dáng --</option>
+                    <option th:each="style : ${styles}"
+                            th:value="${style.id}"
+                            th:selected="${param.styleId} == ${style.id}"
+                            th:text="${style.name}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <select class="form-select" name="fabricId">
+                    <option value="">-- Chất liệu --</option>
+                    <option th:each="fabric : ${fabrics}"
+                            th:value="${fabric.id}"
+                            th:selected="${param.fabricId} == ${fabric.id}"
+                            th:text="${fabric.name}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <input type="number" class="form-control" name="minPrice" placeholder="Giá từ"
+                       th:value="${param.minPrice}">
+            </div>
+
+            <div class="col-md-2">
+                <input type="number" class="form-control" name="maxPrice" placeholder="Giá đến"
+                       th:value="${param.maxPrice}">
+            </div>
+
+            <div class="col-md-1 d-grid">
+                <button type="submit" class="btn btn-primary">Lọc</button>
+            </div>
+        </form>
         <div class="row">
             <div th:each="product : ${products}" class="col-md-4 mb-4 d-flex">
                 <div class="product-card w-100 d-flex flex-column">

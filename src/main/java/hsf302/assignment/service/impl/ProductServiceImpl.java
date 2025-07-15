@@ -6,6 +6,7 @@ import hsf302.assignment.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,30 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Override
+    public List<Product> filterProducts(String name, Integer styleId, Integer fabricId, BigDecimal minPrice, BigDecimal maxPrice) {
+        return productRepository.findAll().stream()
+                .filter(product -> {
+                    if (name != null && !name.isBlank()) {
+                        if (!product.getName().toLowerCase().contains(name.toLowerCase())) return false;
+                    }
+                    if (styleId != null && (product.getStyle() == null || !product.getStyle().getId().equals(styleId))) {
+                        return false;
+                    }
+                    if (fabricId != null && (product.getFabric() == null || !product.getFabric().getId().equals(fabricId))) {
+                        return false;
+                    }
+                    if (minPrice != null && product.getPrice().compareTo(minPrice) < 0) {
+                        return false;
+                    }
+                    if (maxPrice != null && product.getPrice().compareTo(maxPrice) > 0) {
+                        return false;
+                    }
+                    return true;
+                })
+                .toList();
+    }
 
     @Override
     public List<Product> findAll() {
@@ -37,5 +62,30 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteById(Integer id) {
         productRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Product> findByStyle(String styleName) {
+        return productRepository.findByStyle_Name(styleName);
+    }
+
+    @Override
+    public List<Product> findByFabric(String fabricName) {
+        return productRepository.findByFabric_Name(fabricName);
+    }
+
+    @Override
+    public List<Product> searchByName(String keyword) {
+        return productRepository.findByNameContainingIgnoreCase(keyword);
+    }
+
+    @Override
+    public List<Product> filterByPriceRange(BigDecimal min, BigDecimal max) {
+        return productRepository.findByPriceBetween(min, max);
+    }
+
+    @Override
+    public List<Product> getNewestProducts() {
+        return productRepository.findTop10ByOrderByCreatedAtDesc();
     }
 }
