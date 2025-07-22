@@ -3,10 +3,7 @@ package hsf302.assignment.controller;
 import hsf302.assignment.pojo.Product;
 import hsf302.assignment.pojo.ProductImage;
 import hsf302.assignment.pojo.ReadyMadeDress;
-import hsf302.assignment.service.FabricService;
-import hsf302.assignment.service.ProductService;
-import hsf302.assignment.service.StorageService;
-import hsf302.assignment.service.StyleService;
+import hsf302.assignment.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +24,9 @@ public class ProductController {
     private StyleService styleService;
     @Autowired
     private StorageService storageService;
+
+    @Autowired
+    private DecorationService decorationService;
 
     // ----- TRANG CHO NGƯỜI DÙNG -----
 
@@ -56,6 +56,7 @@ public class ProductController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
 
         model.addAttribute("product", product);
+        model.addAttribute("decorations", decorationService.getAll());
         return "product-detail";
     }
 

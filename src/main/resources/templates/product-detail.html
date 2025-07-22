@@ -1,127 +1,326 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title th:text="${product.name}">Chi Tiết Sản Phẩm</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/style/product-detail.css}" type="text/css">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      th:href="@{/style/product-detail.css}"
+      type="text/css"
+    />
     <style>
-        .size-btn.active {
-            background-color: #000 !important;
-            color: #fff !important;
-        }
+      .size-btn.active {
+        background-color: #000 !important;
+        color: #fff !important;
+      }
+
+      .decorations-container {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        padding: 0.5rem;
+      }
+
+      .form-check {
+        padding: 0.5rem;
+        margin-bottom: 0.25rem;
+        border-bottom: 1px solid #eee;
+      }
+
+      .form-check:last-child {
+        border-bottom: none;
+      }
+
+      .form-check-label {
+        width: 100%;
+        cursor: pointer;
+      }
+
+      .text-danger {
+        font-weight: 500;
+      }
     </style>
-</head>
-<body>
-<div class="container my-5">
-    <div class="row">
+  </head>
+  <body>
+    <!-- Navigation -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+    <div class="container my-5">
+      <div class="row">
         <!-- Vùng ảnh sản phẩm -->
         <div class="col-md-6">
-            <!-- Ảnh chính - hiển thị ảnh đầu tiên -->
-            <img th:if="${!product.images.isEmpty()}"
-                 th:src="@{${product.images[0].imageUrl}}"
-                 class="img-fluid" id="main-image" alt="Product Image">
-            <img th:if="${product.images.isEmpty()}"
-                 th:src="@{/images/placeholder.jpg}"
-                 class="img-fluid" alt="No Image">
+          <!-- Ảnh chính - hiển thị ảnh đầu tiên -->
+          <img
+            th:if="${!product.images.isEmpty()}"
+            th:src="@{${product.images[0].imageUrl}}"
+            class="img-fluid"
+            id="main-image"
+            alt="Product Image"
+          />
+          <img
+            th:if="${product.images.isEmpty()}"
+            th:src="@{/images/placeholder.jpg}"
+            class="img-fluid"
+            alt="No Image"
+          />
 
-            <!-- Hàng chứa các ảnh thumbnail -->
-            <div class="row mt-2">
-                <div class="col-3" th:each="image : ${product.images}">
-                    <img th:src="@{ ${image.imageUrl}}" class="img-thumbnail" style="cursor: pointer;"
-                         onclick="document.getElementById('main-image').src=this.src">
-                </div>
+          <!-- Hàng chứa các ảnh thumbnail -->
+          <div class="row mt-2">
+            <div class="col-3" th:each="image : ${product.images}">
+              <img
+                th:src="@{ ${image.imageUrl}}"
+                class="img-thumbnail"
+                style="cursor: pointer"
+                onclick="document.getElementById('main-image').src=this.src"
+              />
+            </div>
+          </div>
+
+          <!-- Vùng thông tin sản phẩm -->
+          <div class="col-md-6">
+            <h4 class="fw-bold mb-2" th:text="${product.name}">Tên sản phẩm</h4>
+            <p class="mb-1 text-muted">
+              MÃ SẢN PHẨM: <span th:text="${product.id}"></span>
+            </p>
+            <h3
+              class="text-danger fw-bold mb-4"
+              th:text="${#numbers.formatDecimal(product.price,0,'COMMA',0,'POINT')} + '₫'"
+            >
+              Giá
+            </h3>
+
+            <!-- Chọn size -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">KÍCH THƯỚC</label><br />
+              <div class="d-flex flex-wrap gap-2" id="sizeButtons">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary size-btn"
+                >
+                  S
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary size-btn"
+                >
+                  M
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary size-btn"
+                >
+                  L
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary size-btn"
+                >
+                  XL
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary size-btn"
+                >
+                  XXL
+                </button>
+                <a href="#" class="ms-2">Hướng dẫn chọn size</a>
+              </div>
             </div>
 
-            <!-- Vùng thông tin sản phẩm -->
-            <div class="col-md-6">
-                <h4 class="fw-bold mb-2" th:text="${product.name}">Tên sản phẩm</h4>
-                <p class="mb-1 text-muted">MÃ SẢN PHẨM: <span th:text="${product.id}"></span></p>
-                <h3 class="text-danger fw-bold mb-4"
-                    th:text="${#numbers.formatDecimal(product.price,0,'COMMA',0,'POINT')} + '₫'">
-                    Giá
-                </h3>
-
-                <!-- Chọn size -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold">KÍCH THƯỚC</label><br>
-                    <div class="d-flex flex-wrap gap-2" id="sizeButtons">
-                        <button type="button" class="btn btn-outline-secondary size-btn">S</button>
-                        <button type="button" class="btn btn-outline-secondary size-btn">M</button>
-                        <button type="button" class="btn btn-outline-secondary size-btn">L</button>
-                        <button type="button" class="btn btn-outline-secondary size-btn">XL</button>
-                        <button type="button" class="btn btn-outline-secondary size-btn">XXL</button>
-                        <a href="#" class="ms-2">Hướng dẫn chọn size</a>
-                    </div>
-                </div>
-
-                <!-- Chọn số lượng -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold">SỐ LƯỢNG</label><br>
-                    <div class="input-group quantity-group" style="width:130px;">
-                        <button class="btn btn-outline-secondary" type="button" id="decreaseQty">-</button>
-                        <input type="text" id="quantityInput" class="form-control text-center" value="1">
-                        <button class="btn btn-outline-secondary" type="button" id="increaseQty">+</button>
-                    </div>
-                </div>
-
-                <!-- Form thêm vào giỏ -->
-                <form th:action="@{/cart/add}" method="post" id="addToCartForm" class="d-flex gap-2 mt-4 flex-wrap">
-                    <input type="hidden" name="productId" th:value="${product.id}">
-                    <input type="hidden" name="quantity" id="quantityHidden" value="1">
-                    <input type="hidden" name="size" id="sizeHidden">
-
-                    <button type="submit" class="btn btn-dark flex-fill py-2">THÊM VÀO GIỎ</button>
-                    <a href="/cart" class="btn btn-danger flex-fill py-2">MUA NGAY</a>
-                </form>
+            <!-- Chọn số lượng -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">SỐ LƯỢNG</label><br />
+              <div class="input-group quantity-group" style="width: 130px">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  id="decreaseQty"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  id="quantityInput"
+                  class="form-control text-center"
+                  value="1"
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  id="increaseQty"
+                >
+                  +
+                </button>
+              </div>
             </div>
+
+            <!-- Chọn trang trí -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">TRANG TRÍ THÊM</label>
+              <div class="decorations-container">
+                <div class="form-check" th:each="decoration : ${decorations}">
+                  <input
+                    class="form-check-input decoration-checkbox"
+                    type="checkbox"
+                    th:value="${decoration.id}"
+                    th:id="'decoration-' + ${decoration.id}"
+                    name="decorations"
+                  />
+                  <label
+                    class="form-check-label d-flex justify-content-between align-items-center"
+                    th:for="'decoration-' + ${decoration.id}"
+                  >
+                    <span th:text="${decoration.name}">Tên trang trí</span>
+                    <span
+                      class="text-danger"
+                      th:text="${#numbers.formatDecimal(decoration.extraPrice,0,'COMMA',0,'POINT')} + '₫'"
+                    >
+                      Giá
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Form thêm vào giỏ -->
+            <form
+              th:action="@{/cart/add}"
+              method="post"
+              id="addToCartForm"
+              class="d-flex gap-2 mt-4 flex-wrap"
+            >
+              <input type="hidden" name="productId" th:value="${product.id}" />
+              <input
+                type="hidden"
+                name="quantity"
+                id="quantityHidden"
+                value="1"
+              />
+              <input type="hidden" name="size" id="sizeHidden" />
+              <input
+                type="hidden"
+                name="selectedDecorations"
+                id="selectedDecorations"
+                value=""
+              />
+
+              <button type="submit" class="btn btn-dark flex-fill py-2">
+                THÊM VÀO GIỎ
+              </button>
+              <a href="/cart" class="btn btn-danger flex-fill py-2">MUA NGAY</a>
+            </form>
+          </div>
         </div>
-    </div>
-
-    <script>
+      </div>
+      <div th:replace="fragments/footer :: footer"></div>
+      <script>
         // Xử lý chọn size
         const sizeButtons = document.querySelectorAll(".size-btn");
         const sizeHidden = document.getElementById("sizeHidden");
 
-        sizeButtons.forEach(btn => {
-            btn.addEventListener("click", () => {
-                sizeButtons.forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
-                sizeHidden.value = btn.textContent.trim();
-            });
+        sizeButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            sizeButtons.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            sizeHidden.value = btn.textContent.trim();
+          });
         });
 
         // Tăng giảm số lượng
         const qtyInput = document.getElementById("quantityInput");
         const qtyHidden = document.getElementById("quantityHidden");
         document.getElementById("increaseQty").addEventListener("click", () => {
-            let val = parseInt(qtyInput.value || "1");
-            qtyInput.value = val + 1;
-            qtyHidden.value = val + 1;
+          let val = parseInt(qtyInput.value || "1");
+          qtyInput.value = val + 1;
+          qtyHidden.value = val + 1;
         });
         document.getElementById("decreaseQty").addEventListener("click", () => {
-            let val = parseInt(qtyInput.value || "1");
-            if (val > 1) {
-                qtyInput.value = val - 1;
-                qtyHidden.value = val - 1;
-            }
+          let val = parseInt(qtyInput.value || "1");
+          if (val > 1) {
+            qtyInput.value = val - 1;
+            qtyHidden.value = val - 1;
+          }
         });
         qtyInput.addEventListener("input", () => {
-            let val = parseInt(qtyInput.value || "1");
-            if (val < 1 || isNaN(val)) val = 1;
-            qtyInput.value = val;
-            qtyHidden.value = val;
+          let val = parseInt(qtyInput.value || "1");
+          if (val < 1 || isNaN(val)) val = 1;
+          qtyInput.value = val;
+          qtyHidden.value = val;
         });
 
         // Kiểm tra size khi submit
-        document.getElementById("addToCartForm").addEventListener("submit", function (e) {
+        document
+          .getElementById("addToCartForm")
+          .addEventListener("submit", function (e) {
             if (!sizeHidden.value) {
-                e.preventDefault();
-                alert("Vui lòng chọn kích thước!");
+              e.preventDefault();
+              alert("Vui lòng chọn kích thước!");
+              return;
             }
-        });
-    </script>
-</div>
 
-</body>
+            // Collect selected decorations
+            const selectedDecorations = [];
+            document
+              .querySelectorAll(".decoration-checkbox:checked")
+              .forEach((checkbox) => {
+                selectedDecorations.push(checkbox.value);
+              });
+            document.getElementById("selectedDecorations").value =
+              selectedDecorations.join(",");
+          });
+
+        // Handle decoration selection and price update
+        function updateTotalPrice() {
+          const basePrice = parseInt(
+            document
+              .querySelector(".text-danger.fw-bold")
+              .textContent.replace(/[^\d]/g, "")
+          );
+          let totalPrice = basePrice;
+
+          document
+            .querySelectorAll(".decoration-checkbox:checked")
+            .forEach((checkbox) => {
+              const priceText =
+                checkbox.parentElement.querySelector(
+                  ".text-danger"
+                ).textContent;
+              const decorationPrice = parseInt(priceText.replace(/[^\d]/g, ""));
+              totalPrice += decorationPrice;
+            });
+
+          const quantity = parseInt(
+            document.getElementById("quantityInput").value || "1"
+          );
+          totalPrice *= quantity;
+
+          // Update displayed price
+          document.querySelector(".text-danger.fw-bold").textContent =
+            new Intl.NumberFormat("vi-VN").format(totalPrice) + "₫";
+        }
+
+        // Add event listeners for decoration checkboxes
+        document
+          .querySelectorAll(".decoration-checkbox")
+          .forEach((checkbox) => {
+            checkbox.addEventListener("change", updateTotalPrice);
+          });
+
+        // Update price when quantity changes
+        document
+          .getElementById("quantityInput")
+          .addEventListener("input", updateTotalPrice);
+        document
+          .getElementById("increaseQty")
+          .addEventListener("click", updateTotalPrice);
+        document
+          .getElementById("decreaseQty")
+          .addEventListener("click", updateTotalPrice);
+      </script>
+    </div>
+  </body>
 </html>

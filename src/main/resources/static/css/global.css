@@ -1,0 +1,32 @@
+/* Global styles for fixed navbar and footer */
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main content wrapper */
+.main-content {
+  flex: 1;
+  padding-top: 76px; /* Height of navbar + some padding */
+  padding-bottom: 30px;
+}
+
+/* Navbar styles */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer styles */
+footer {
+  margin-top: auto;
+  width: 100vw;
+  background-color: #212529;
+  color: white;
+}
