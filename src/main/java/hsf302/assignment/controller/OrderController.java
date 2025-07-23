@@ -8,7 +8,13 @@ import hsf302.assignment.repository.OrderItemRepository;
 import hsf302.assignment.repository.OrderRepository;
 import hsf302.assignment.repository.UserRepository;
 import hsf302.assignment.service.CartService;
+import hsf302.assignment.service.OrderService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,25 +22,26 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/order")
+@AllArgsConstructor
 public class OrderController {
 
-    @Autowired
+
     private CartService cartService;
 
-    @Autowired
     private OrderRepository orderRepository;
 
-    @Autowired
     private OrderItemRepository orderItemRepository;
 
-    @Autowired
     private UserRepository userRepository;
+    private OrderService orderService;
 
     // Đặt hàng
-    @PostMapping("/checkout")
+    @PostMapping("/order/checkout")
     public String checkout(@RequestParam Long userId) {
         // Lấy user từ DB
         User user = userRepository.findById(userId.intValue())
@@ -63,7 +70,7 @@ public class OrderController {
     }
 
     // Xem danh sách đơn hàng
-    @GetMapping("/list")
+    @GetMapping("/order/list")
     public String listOrders(@RequestParam Long userId, Model model) {
         User user = userRepository.findById(userId.intValue())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -75,11 +82,55 @@ public class OrderController {
     }
 
     // Xem chi tiết đơn hàng
-    @GetMapping("/detail/{id}")
+    @GetMapping("/order/detail/{id}")
     public String orderDetail(@PathVariable Long id, Model model) {
         Order order = orderRepository.findById(id.intValue())
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         model.addAttribute("order", order);
         return "order_detail";
     }
+
+    @GetMapping("/admin/orders")
+    public String listOrders(
+            Model model
+    ) {
+        List<Order> orders = orderService.getAllOrders();
+        model.addAttribute("orders", orders);
+        return "admin/order-manager";
+    }
+
+    @GetMapping("/admin/orders/{id}")
+    public String viewOrderDetail(@PathVariable Integer id, Model model) {
+        Optional<Order> order = orderService.getOrderById(id);
+        if (order.isPresent()) {
+            model.addAttribute("order", order.get());
+            return "admin/order-detail";
+        }
+        return "redirect:/admin/orders";
+    }
+
+    @PutMapping("/admin/orders/{id}/status")
+    public String updateOrderStatus(
+            @PathVariable Integer id,
+            @RequestParam OrderStatusEnum status,
+            @RequestParam(required = false) String returnUrl
+    ) {
+        try {
+            orderService.updateOrderStatus(id, status);
+        } catch (Exception e) {
+            // Log the error if needed
+        }
+        return returnUrl != null ? "redirect:" + returnUrl : "redirect:/admin/orders";
+    }
+
+    @GetMapping("/admin/orders/{id}/delete")
+    public String deleteOrder(@PathVariable Integer id, @RequestParam(required = false) String returnUrl) {
+        try {
+            orderService.deleteOrder(id);
+        } catch (Exception e) {
+            // Log the error if needed
+        }
+        return returnUrl != null ? "redirect:" + returnUrl : "redirect:/admin/orders";
+    }
+
 }

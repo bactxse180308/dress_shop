@@ -1,41 +1,43 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Danh sách đơn hàng</title>
-  <link rel="stylesheet" th:href="@{/style/order_list.css}" type="text/css">
+    <meta charset="UTF-8">
+    <title>Danh sách đơn hàng</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/style/order_list.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/global.css}" type="text/css"/>
 </head>
 <body>
-    <!-- Navigation -->
-    <div th:replace="fragments/navbar :: navbar"></div>
+<!-- Navigation -->
+<div th:replace="fragments/navbar :: navbar"></div>
 
-    <div class="container">
-        <div class="order-list">
-  <h1 class="title">Đơn hàng của bạn</h1>
+<div class="container">
+    <div class="order-list">
+        <h1 class="title">Đơn hàng của bạn</h1>
 
-  <table class="order-table">
-    <thead>
-    <tr>
-      <th>Mã đơn</th>
-      <th>Ngày đặt</th>
-      <th>Trạng thái</th>
-      <th>Tổng tiền</th>
-      <th>Chi tiết</th>
-    </tr>
-    </thead>
-    <tbody class="order-detail">
-    <tr th:each="order : ${orders}">
-      <td th:text="${order.id}">1</td>
-      <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">01/01/2025</td>
-      <td th:text="${order.status}">Đang xử lý</td>
-      <td th:text="${order.totalAmount}">0</td>
-      <td>
-        <a class="btn-detail" th:href="@{'/order/detail/' + ${order.id}}">Xem</a>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+        <table class="order-table">
+            <thead>
+            <tr>
+                <th>Mã đơn</th>
+                <th>Ngày đặt</th>
+                <th>Trạng thái</th>
+                <th>Tổng tiền</th>
+                <th>Chi tiết</th>
+            </tr>
+            </thead>
+            <tbody class="order-detail">
+            <tr th:each="order : ${orders}">
+                <td th:text="${order.id}">1</td>
+                <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">01/01/2025</td>
+                <td th:text="${order.status}">Đang xử lý</td>
+                <td th:text="${order.totalAmount}">0</td>
+                <td>
+                    <a class="btn-detail" th:href="@{'/order/detail/' + ${order.id}}">Xem</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
-
 </body>
 </html>

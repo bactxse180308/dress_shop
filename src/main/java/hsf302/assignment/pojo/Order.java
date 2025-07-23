@@ -38,5 +38,15 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
 
+    @PrePersist
+    public void prePersist() {
+        if (this.orderDate == null) {
+            this.orderDate = LocalDateTime.now();
+        }
+        if (this.status == null) {
+            this.status = OrderStatusEnum.Pending;
+        }
+    }
+
     // Getters and Setters
 }
