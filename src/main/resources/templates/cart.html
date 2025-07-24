@@ -49,62 +49,66 @@
 <body>
 <div th:replace="fragments/navbar :: navbar"></div>
 
-<div class="container my-5">
-    <h1 class="mb-4 mt-10">Giỏ Hàng Của Bạn</h1>
+<div class="main-content">
+    <div class="container my-5">
+        <h1 class="mb-4 mt-10">Giỏ Hàng Của Bạn</h1>
 
-    <table class="table cart-table mt-4">
-        <thead class="table-light">
-        <tr>
-            <th>Sản phẩm</th>
-            <th>Size</th>
-            <th>Số lượng</th>
-            <th>Giá</th>
-            <th>Thành tiền</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="item, iterStat : ${cartItems}">
-            <td>
-                <div class="product-name" th:text="${item.product.name}">Tên sản phẩm</div>
-                <div class="product-description" th:text="${item.product.description}">Mô tả sản phẩm</div>
-            </td>
-            <td th:text="${item.measurement != null ? item.measurement.note : '-'}">-</td>
-            <td th:text="${item.quantity}">1</td>
-            <td class="product-price" th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">0</td>
-            <td class="product-price" th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + '₫'">0</td>
-            <td>
-                <form th:action="@{/cart/remove}" method="post" class="d-inline">
-                    <input type="hidden" name="index" th:value="${iterStat.index}"/>
-                    <button type="submit" class="btn btn-link text-danger p-0">
-                        <i class="bi bi-trash"></i>
-                    </button>
+        <table class="table cart-table mt-4">
+            <thead class="table-light">
+            <tr>
+                <th>Sản phẩm</th>
+                <th>Size</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+                <th>Thành tiền</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item, iterStat : ${cartItems}">
+                <td>
+                    <div class="product-name" th:text="${item.product.name}">Tên sản phẩm</div>
+                    <div class="product-description" th:text="${item.product.description}">Mô tả sản phẩm</div>
+                </td>
+                <td th:text="${item.measurement != null ? item.measurement.note : '-'}">-</td>
+                <td th:text="${item.quantity}">1</td>
+                <td class="product-price" th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">0</td>
+                <td class="product-price" th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + '₫'">0</td>
+                <td>
+                    <form th:action="@{/cart/remove}" method="post" class="d-inline">
+                        <input type="hidden" name="index" th:value="${iterStat.index}"/>
+                        <button type="submit" class="btn btn-link text-danger p-0">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
+            <a href="/products" class="btn btn-link">
+                <i class="bi bi-arrow-left"></i> Tiếp tục mua hàng
+            </a>
+
+            <div class="total-amount">
+                TỔNG:
+                <span th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + '₫'">0</span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <form th:action="@{/cart/clear}" method="post" class="d-inline">
+                    <button th:disabled="${total <= 0}" type="submit" class="btn btn-outline-secondary">XÓA HẾT</button>
                 </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-
-    <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
-        <a href="/products" class="btn btn-link">
-            <i class="bi bi-arrow-left"></i> Tiếp tục mua hàng
-        </a>
-
-        <div class="total-amount">
-            TỔNG:
-            <span th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + '₫'">0</span>
-        </div>
-
-        <div class="d-flex gap-2">
-            <form th:action="@{/cart/clear}" method="post" class="d-inline">
-                <button type="submit" class="btn btn-outline-secondary">XÓA HẾT</button>
-            </form>
-            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#checkoutModal">
-                TIẾN HÀNH THANH TOÁN
-            </button>
+                <button th:disabled="${total <= 0}" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#checkoutModal">
+                    TIẾN HÀNH THANH TOÁN
+                </button>
+            </div>
         </div>
     </div>
 </div>
+
+
 
 <!-- Footer -->
 <div th:replace="fragments/footer :: footer"></div>

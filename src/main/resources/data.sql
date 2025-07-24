@@ -52,13 +52,13 @@ VALUES
 INSERT INTO [DressOfficeShop].[dbo].[products]
 ([created_at], [description], [name], [price], [fabric_id], [style_id])
 VALUES
-    (GETDATE(), 'Váy đầm công sở thanh lịch, phù hợp môi trường văn phòng.', N'Đầm Công Sở Dài Tay', 550000, 1, 1),
-    (GETDATE(), 'Váy ôm body sang trọng, chất liệu cao cấp co giãn tốt.', N'Đầm Body Sang Trọng', 680000, 2, 2),
-    (GETDATE(), 'Váy maxi nhẹ nhàng, phù hợp đi biển hoặc dự tiệc ngoài trời.', N'Đầm Maxi Hè', 720000, 3, 3),
-    (GETDATE(), 'Váy suông basic dễ mặc, phối đồ đơn giản.', N'Váy Suông Basic', 450000, 1, 4),
-    (GETDATE(), 'Đầm xòe nữ tính, form rộng thoải mái.', N'Đầm Xòe Nữ Tính', 600000, 2, 5),
-    (GETDATE(), 'Váy midi thời trang, phối kèm thắt lưng da.', N'Váy Midi Kèm Thắt Lưng', 700000, 3, 2),
-    (GETDATE(), 'Đầm cổ V sang chảnh, phối ren phần tay áo.', N'Đầm Cổ V Phối Ren', 850000, 1, 3),
-    (GETDATE(), 'Váy vest form chuẩn, phù hợp phỏng vấn hoặc gặp đối tác.', N'Váy Vest Công Sở', 950000, 4, 1),
-    (GETDATE(), 'Váy denim cá tính, hợp phong cách đường phố.', N'Váy Jean Denim', 500000, 5, 6),
-    (GETDATE(), 'Đầm dạ hội đuôi cá, phù hợp tiệc cưới.', N'Đầm Dạ Hội Đuôi Cá', 1200000, 6, 2);
+    (GETDATE(), N'Váy đầm công sở thanh lịch, phù hợp môi trường văn phòng.', N'Đầm Công Sở Dài Tay', 550000, 1, 1),
+    (GETDATE(), N'Váy ôm body sang trọng, chất liệu cao cấp co giãn tốt.', N'Đầm Body Sang Trọng', 680000, 2, 2),
+    (GETDATE(), N'Váy maxi nhẹ nhàng, phù hợp đi biển hoặc dự tiệc ngoài trời.', N'Đầm Maxi Hè', 720000, 3, 3),
+    (GETDATE(), N'Váy suông basic dễ mặc, phối đồ đơn giản.', N'Váy Suông Basic', 450000, 1, 4),
+    (GETDATE(), N'Đầm xòe nữ tính, form rộng thoải mái.', N'Đầm Xòe Nữ Tính', 600000, 2, 5),
+    (GETDATE(), N'Váy midi thời trang, phối kèm thắt lưng da.', N'Váy Midi Kèm Thắt Lưng', 700000, 3, 2),
+    (GETDATE(), N'Đầm cổ V sang chảnh, phối ren phần tay áo.', N'Đầm Cổ V Phối Ren', 850000, 1, 3),
+    (GETDATE(), N'Váy vest form chuẩn, phù hợp phỏng vấn hoặc gặp đối tác.', N'Váy Vest Công Sở', 950000, 4, 1),
+    (GETDATE(), N'Váy denim cá tính, hợp phong cách đường phố.', N'Váy Jean Denim', 500000, 5, 6),
+    (GETDATE(), N'Đầm dạ hội đuôi cá, phù hợp tiệc cưới.', N'Đầm Dạ Hội Đuôi Cá', 1200000, 6, 2);

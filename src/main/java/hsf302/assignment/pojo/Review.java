@@ -1,5 +1,6 @@
 package hsf302.assignment.pojo;
 
+import hsf302.assignment.Enum.ReviewStatusEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,5 +33,5 @@ public class Review {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // Getters and Setters
+    private ReviewStatusEnum reviewStatus;
 }

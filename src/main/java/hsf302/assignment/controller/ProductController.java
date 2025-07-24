@@ -3,6 +3,7 @@ package hsf302.assignment.controller;
 import hsf302.assignment.pojo.Product;
 import hsf302.assignment.pojo.ProductImage;
 import hsf302.assignment.pojo.ReadyMadeDress;
+import hsf302.assignment.pojo.Review;
 import hsf302.assignment.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Controller
 public class ProductController {
@@ -24,6 +26,9 @@ public class ProductController {
     private StyleService styleService;
     @Autowired
     private StorageService storageService;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @Autowired
     private DecorationService decorationService;
@@ -54,7 +59,8 @@ public class ProductController {
     public String showProductDetail(@PathVariable("id") Integer id, Model model) {
         Product product = productService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
-
+        List<Review> reviews = reviewService.getAllReviewsByProductId(id);
+        model.addAttribute("reviews", reviews);
         model.addAttribute("product", product);
         model.addAttribute("decorations", decorationService.getAll());
         return "product-detail";

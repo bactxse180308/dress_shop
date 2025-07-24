@@ -170,3 +170,8 @@
     margin-left: 0;
   }
 }
+
+.btn-group {
+  display: flex;
+  gap: 0.5rem;
+}

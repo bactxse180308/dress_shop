@@ -33,46 +33,48 @@
 <body>
 <!-- Navbar -->
 <div th:replace="fragments/navbar :: navbar"></div>
+<div class="main-content">
+    <div class="container my-5">
+        <h1 class="mb-4">Danh Sách Đơn Hàng</h1>
 
-<div class="container my-5">
-    <h1 class="mb-4">Danh Sách Đơn Hàng</h1>
+        <table class="table order-table mt-4">
+            <thead class="table-light">
+            <tr>
+                <th>Mã đơn</th>
+                <th>Ngày đặt</th>
+                <th>Trạng thái</th>
+                <th>Tổng tiền</th>
+                <th>Hình ảnh sản phẩm</th> <!-- Added image column -->
+                <th>Chi tiết</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+                <td th:text="${order.id}">1</td>
+                <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">01/01/2025</td>
+                <td class="order-status" th:text="${order.status}">Đang xử lý</td>
+                <td class="order-total" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</td>
+                <td th:each="item : ${order.orderItems}">
+                    <!-- Kiểm tra xem product có phải là null không -->
+                    <img th:if="${item.product != null and not item.product.images.isEmpty()}"
+                         th:src="@{${item.product.images[0].imageUrl}}"
+                         class="product-image"
+                         alt="Product Image" />
+                    <img th:if="${item.product == null or item.product.images.isEmpty()}"
+                         th:src="@{/images/placeholder.jpg}"
+                         class="product-image"
+                         alt="No Image" />
+                </td>
 
-    <table class="table order-table mt-4">
-        <thead class="table-light">
-        <tr>
-            <th>Mã đơn</th>
-            <th>Ngày đặt</th>
-            <th>Trạng thái</th>
-            <th>Tổng tiền</th>
-            <th>Hình ảnh sản phẩm</th> <!-- Added image column -->
-            <th>Chi tiết</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="order : ${orders}">
-            <td th:text="${order.id}">1</td>
-            <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">01/01/2025</td>
-            <td class="order-status" th:text="${order.status}">Đang xử lý</td>
-            <td class="order-total" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</td>
-            <td th:each="item : ${order.orderItems}">
-                <!-- Kiểm tra xem product có phải là null không -->
-                <img th:if="${item.product != null and not item.product.images.isEmpty()}"
-                     th:src="@{${item.product.images[0].imageUrl}}"
-                     class="product-image"
-                     alt="Product Image" />
-                <img th:if="${item.product == null or item.product.images.isEmpty()}"
-                     th:src="@{/images/placeholder.jpg}"
-                     class="product-image"
-                     alt="No Image" />
-            </td>
-
-            <td>
-                <a class="btn btn-primary" th:href="@{'/order/detail/' + ${order.id}}">Xem chi tiết</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+                <td>
+                    <a class="btn btn-primary" th:href="@{'/order/detail/' + ${order.id}}">Xem chi tiết</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
+
 
 <!-- Footer -->
 <div th:replace="fragments/footer :: footer"></div>
