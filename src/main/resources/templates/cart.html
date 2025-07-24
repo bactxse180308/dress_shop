@@ -3,14 +3,8 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Giỏ Hàng Của Bạn</title>
-    <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-    />
-    <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-            rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/global.css}" type="text/css"/>
     <style>
@@ -39,6 +33,17 @@
             font-weight: bold;
             color: #d9534f;
         }
+
+        /* Styling for the QR code section */
+        .qr-code-section {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .qr-code {
+            max-width: 200px;
+            max-height: 200px;
+        }
     </style>
 </head>
 <body>
@@ -61,34 +66,13 @@
         <tbody>
         <tr th:each="item, iterStat : ${cartItems}">
             <td>
-                <div class="product-name" th:text="${item.product.name}">
-                    Tên sản phẩm
-                </div>
-                <div
-                        class="product-description"
-                        th:text="${item.product.description}"
-                >
-                    Mô tả sản phẩm
-                </div>
+                <div class="product-name" th:text="${item.product.name}">Tên sản phẩm</div>
+                <div class="product-description" th:text="${item.product.description}">Mô tả sản phẩm</div>
             </td>
-            <td
-                    th:text="${item.measurement != null ? item.measurement.note : '-'}"
-            >
-                -
-            </td>
+            <td th:text="${item.measurement != null ? item.measurement.note : '-'}">-</td>
             <td th:text="${item.quantity}">1</td>
-            <td
-                    class="product-price"
-                    th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'"
-            >
-                0
-            </td>
-            <td
-                    class="product-price"
-                    th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + '₫'"
-            >
-                0
-            </td>
+            <td class="product-price" th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">0</td>
+            <td class="product-price" th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + '₫'">0</td>
             <td>
                 <form th:action="@{/cart/remove}" method="post" class="d-inline">
                     <input type="hidden" name="index" th:value="${iterStat.index}"/>
@@ -101,38 +85,165 @@
         </tbody>
     </table>
 
-    <div
-            class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2"
-    >
+    <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
         <a href="/products" class="btn btn-link">
             <i class="bi bi-arrow-left"></i> Tiếp tục mua hàng
         </a>
 
         <div class="total-amount">
             TỔNG:
-            <span
-                    th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + '₫'"
-            >0</span
-            >
+            <span th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + '₫'">0</span>
         </div>
 
         <div class="d-flex gap-2">
             <form th:action="@{/cart/clear}" method="post" class="d-inline">
-                <button type="submit" class="btn btn-outline-secondary">
-                    XÓA HẾT
-                </button>
+                <button type="submit" class="btn btn-outline-secondary">XÓA HẾT</button>
             </form>
-            <form th:action="@{/order/checkout}" method="post" class="d-inline">
-                <input type="hidden" name="userId" value="1"/>
-                <button type="submit" class="btn btn-dark">
-                    TIẾN HÀNH THANH TOÁN
-                </button>
+            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#checkoutModal">
+                TIẾN HÀNH THANH TOÁN
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div th:replace="fragments/footer :: footer"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Modal Thông tin thanh toán -->
+<div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="checkoutModalLabel">Thông tin thanh toán</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/order/checkout}" method="post" id="checkoutForm" class="needs-validation">
+                <div class="modal-body">
+                    <!-- Các trường nhập thông tin khách hàng -->
+                    <div class="mb-3">
+                        <label for="customerName" class="form-label">Họ và tên</label>
+                        <input type="text" class="form-control" id="customerName" name="customerName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="customerPhone" class="form-label">Số điện thoại</label>
+                        <input type="text" class="form-control" id="customerPhone" name="customerPhone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="customerEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="customerEmail" name="customerEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="shippingAddressDetail" class="form-label">Địa chỉ giao hàng *</label>
+                        <input type="text" class="form-control" id="shippingAddressDetail" name="shippingAddressDetail" required minlength="10" maxlength="200" placeholder="Số nhà, tên đường, phường/xã">
+                        <div class="invalid-feedback">Vui lòng nhập địa chỉ chi tiết (ít nhất 10 ký tự)</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="city" class="form-label">Thành phố *</label>
+                        <select id="city" name="city" class="form-control" required onchange="updateWardOptions()">
+                            <option value="">-- Chọn thành phố --</option>
+                            <option value="hcm">TP Hồ Chí Minh</option>
+                            <option value="hn">Hà Nội</option>
+                            <option value="dn">Đà Nẵng</option>
+                            <option value="ct">Cần Thơ</option>
+                            <option value="hp">Hải Phòng</option>
+                        </select>
+                        <div class="invalid-feedback">Vui lòng chọn thành phố</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ward" class="form-label">Xã *</label>
+                        <select id="ward" name="ward" class="form-control" required>
+                            <option value="">-- Chọn xã --</option>
+                        </select>
+                        <div class="invalid-feedback">Vui lòng chọn xã</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="paymentMethod" class="form-label">Phương thức thanh toán *</label>
+                        <select id="paymentMethod" name="paymentMethod" class="form-control" required onchange="showBankTransferDetails()">
+                            <option value="">-- Chọn phương thức --</option>
+                            <option value="cod">Thanh toán khi nhận hàng (COD)</option>
+                            <option value="bank">Chuyển khoản ngân hàng</option>
+                        </select>
+                        <div class="invalid-feedback">Vui lòng chọn phương thức thanh toán</div>
+                    </div>
+
+                    <div id="bankTransferDetails" class="qr-code-section">
+                        <p><strong>Chuyển khoản ngân hàng:</strong></p>
+                        <p><strong>Ngân hàng:</strong> ACB</p>
+                        <p><strong>Chủ tài khoản:</strong> Trần Xuân Bắc</p>
+                        <p><strong>Số tiền cần chuyển:</strong> <span th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')}">0₫</span></p>
+                        <img id="qrCode" class="qr-code" src="https://www.qr-code-generator.com/wp-content/themes/qr/new_structure/assets/media/qr-placeholder.svg" alt="QR Code" />
+                    </div>
+
+                    <input type="hidden" name="userId" value="1"/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-dark">Xác nhận thanh toán</button>
+                </div>
             </form>
         </div>
     </div>
 </div>
-<!-- Footer -->
-<div th:replace="fragments/footer :: footer"></div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function updateWardOptions() {
+        const city = document.getElementById('city').value;
+        const wardSelect = document.getElementById('ward');
+        wardSelect.innerHTML = '<option value="">-- Chọn xã --</option>';
+        const wards = {
+            'hcm': [
+                { value: 'phu_nhuan', text: 'Phú Nhuận' },
+                { value: 'ben_nghe', text: 'Bến Nghé' },
+                { value: 'tan_dinh', text: 'Tân Định' }
+            ],
+            'hn': [
+                { value: 'dong_da', text: 'Đống Đa' },
+                { value: 'hoan_kiem', text: 'Hoàn Kiếm' },
+                { value: 'ba_dinh', text: 'Ba Đình' }
+            ],
+            'dn': [
+                { value: 'hai_chau', text: 'Hải Châu' },
+                { value: 'thanh_khe', text: 'Thanh Khê' },
+                { value: 'son_tra', text: 'Sơn Trà' }
+            ],
+            'ct': [
+                { value: 'ninh_kieu', text: 'Ninh Kiều' },
+                { value: 'binh_thuy', text: 'Bình Thủy' },
+                { value: 'cai_rang', text: 'Cái Răng' }
+            ],
+            'hp': [
+                { value: 'ngo_quyen', text: 'Ngô Quyền' },
+                { value: 'le_chan', text: 'Lê Chân' },
+                { value: 'kien_an', text: 'Kiến An' }
+            ]
+        };
+
+        if (wards[city]) {
+            wards[city].forEach(function(ward) {
+                const option = document.createElement('option');
+                option.value = ward.value;
+                option.text = ward.text;
+                wardSelect.appendChild(option);
+            });
+        }
+    }
+
+    function showBankTransferDetails() {
+        var paymentMethod = document.getElementById('paymentMethod').value;
+        var qrCodeSection = document.getElementById('bankTransferDetails');
+        var qrCodeImg = document.getElementById('qrCode');
+
+        if (paymentMethod === 'bank') {
+            qrCodeSection.style.display = 'block';
+            var amount = document.querySelector('.total-amount span').innerText;
+            qrCodeImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(amount + ' ACB Trần Xuân Bắc');
+        } else {
+            qrCodeSection.style.display = 'none';
+        }
+    }
+</script>
+
 </body>
 </html>

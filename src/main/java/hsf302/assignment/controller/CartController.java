@@ -4,6 +4,7 @@ import hsf302.assignment.pojo.Measurement;
 import hsf302.assignment.pojo.Product;
 import hsf302.assignment.repository.ProductRepository;
 import hsf302.assignment.service.CartService;
+import hsf302.assignment.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +18,7 @@ public class CartController {
     private CartService cartService;
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductService productService;
 
     @GetMapping
     public String showCart(Model model) {
@@ -32,7 +33,7 @@ public class CartController {
             @RequestParam int quantity,
             @RequestParam(required = false) String size
     ) {
-        Product product = productRepository.findById(productId)
+        Product product = productService.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
         Measurement measurement = null;

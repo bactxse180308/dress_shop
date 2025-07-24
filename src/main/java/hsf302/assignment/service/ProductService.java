@@ -11,6 +11,8 @@ public interface ProductService {
                                  BigDecimal minPrice, BigDecimal maxPrice);
     List<Product> findAll();
     Optional<Product> findById(Integer  id);
+
+    List<Product> findById1(Integer  id);
     Product save(Product product);
     void deleteById(Integer  id);
     List<Product> findByStyle(String styleName);

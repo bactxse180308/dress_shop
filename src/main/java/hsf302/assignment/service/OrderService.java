@@ -2,6 +2,7 @@ package hsf302.assignment.service;
 
 import hsf302.assignment.Enum.OrderStatusEnum;
 import hsf302.assignment.pojo.Order;
+import hsf302.assignment.pojo.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,4 +22,7 @@ public interface OrderService {
     Order saveOrder(Order order);
 
 
+    List<Order> findByUser(User user);
+
+    public List<Order> findById(Integer id);
 }

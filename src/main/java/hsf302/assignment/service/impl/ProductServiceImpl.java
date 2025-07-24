@@ -51,6 +51,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> findById1(Integer id) {
+        return productRepository.findById(id)
+                .map(List::of)
+                .orElse(List.of());
+    }
+
+    @Override
     public Product save(Product product) {
         // Đảm bảo quan hệ hai chiều được thiết lập đúng cách
         if (product.getReadyMadeDress() != null) {

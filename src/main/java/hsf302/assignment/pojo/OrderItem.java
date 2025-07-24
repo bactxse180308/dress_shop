@@ -33,11 +33,11 @@ public class OrderItem {
 
     @OneToMany(mappedBy = "orderItem")
     private List<OrderItemDecoration> orderItemDecorations;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "measurement_id")
     private Measurement measurement;
 
-
-
-    // Getters and Setters
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 }

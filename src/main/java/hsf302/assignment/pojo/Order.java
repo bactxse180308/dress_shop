@@ -32,8 +32,26 @@ public class Order {
     @Column(name = "total_amount", nullable = false)
     private BigDecimal totalAmount;
 
-    @Column(name = "shipping_address", columnDefinition = "NVARCHAR(MAX)")
-    private String shippingAddress;
+    @Column(name = "shipping_address_detail", columnDefinition = "NVARCHAR(200)")
+    private String shippingAddressDetail;
+
+    @Column(name = "city", columnDefinition = "NVARCHAR(50)")
+    private String city;
+
+    @Column(name = "ward", columnDefinition = "NVARCHAR(50)")
+    private String ward;
+
+    @Column(name = "payment_method", columnDefinition = "NVARCHAR(50)")
+    private String paymentMethod;
+
+    @Column(name = "customer_name", columnDefinition = "NVARCHAR(255)")
+    private String customerName;
+
+    @Column(name = "customer_phone", columnDefinition = "NVARCHAR(50)")
+    private String customerPhone;
+
+    @Column(name = "customer_email", columnDefinition = "NVARCHAR(255)")
+    private String customerEmail;
 
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
@@ -49,4 +67,5 @@ public class Order {
     }
 
     // Getters and Setters
+
 }

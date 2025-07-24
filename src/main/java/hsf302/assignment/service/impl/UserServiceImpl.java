@@ -69,4 +69,10 @@ public class UserServiceImpl implements UserService {
         return passwordEncoder.matches(password, user.getPassword()) ? user : null;
     }
 
+    @Override
+    public Optional<Object> findById(Integer id) {
+        return userRepository.findById(id)
+                .map(user -> (Object) user); // Trả về Optional chứa User hoặc null nếu không tìm thấy
+    }
+
 }

@@ -1,104 +1,137 @@
 package hsf302.assignment.controller;
 
 import hsf302.assignment.Enum.OrderStatusEnum;
+import hsf302.assignment.pojo.Measurement;
 import hsf302.assignment.pojo.Order;
 import hsf302.assignment.pojo.OrderItem;
 import hsf302.assignment.pojo.User;
-import hsf302.assignment.repository.OrderItemRepository;
-import hsf302.assignment.repository.OrderRepository;
-import hsf302.assignment.repository.UserRepository;
-import hsf302.assignment.service.CartService;
-import hsf302.assignment.service.OrderService;
-import lombok.AllArgsConstructor;
+import hsf302.assignment.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
-@AllArgsConstructor
 public class OrderController {
 
+    private final CartService cartService;
+    private final OrderItemService orderItemService;
+    private final UserService userService;
+    private final OrderService orderService;
+    private final MeasurementService measurementService;
 
-    private CartService cartService;
-
-    private OrderRepository orderRepository;
-
-    private OrderItemRepository orderItemRepository;
-
-    private UserRepository userRepository;
-    private OrderService orderService;
+    @Autowired
+    public OrderController(CartService cartService, OrderItemService orderItemService,
+                           UserService userService, OrderService orderService, MeasurementService measurementService) {
+        this.cartService = cartService;
+        this.orderItemService = orderItemService;
+        this.userService = userService;
+        this.orderService = orderService;
+        this.measurementService = measurementService;
+    }
 
     // Đặt hàng
     @PostMapping("/order/checkout")
-    public String checkout(@RequestParam Long userId) {
-        // Lấy user từ DB
-        User user = userRepository.findById(userId.intValue())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+    public String checkout(
+            @RequestParam Long userId,
+            @RequestParam String customerName,
+            @RequestParam String customerPhone,
+            @RequestParam String customerEmail,
+            @RequestParam String shippingAddressDetail,
+            @RequestParam String city,
+            @RequestParam String ward,
+            @RequestParam String paymentMethod,
+            @RequestParam(required = false) String transactionCode,  // Mã giao dịch cho phương thức chuyển khoản
+            RedirectAttributes redirectAttributes
+    ) {
         // Tạo đơn hàng
-        hsf302.assignment.pojo.Order order = new hsf302.assignment.pojo.Order();
-
+        User user = userService.getUserById(userId.intValue());
+        Order order = new Order();
         order.setUser(user);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatusEnum.Pending);
-
         order.setTotalAmount(cartService.calculateTotal());
 
-        orderRepository.save(order);
+        // Lưu thông tin khách hàng và giao hàng
+        order.setCustomerName(customerName);
+        order.setCustomerPhone(customerPhone);
+        order.setCustomerEmail(customerEmail);
+        order.setShippingAddressDetail(shippingAddressDetail);
+        order.setCity(city);
+        order.setWard(ward);
+        order.setPaymentMethod(paymentMethod);
 
-        // Lưu các sản phẩm trong giỏ
-        for (OrderItem item : cartService.getCartItems()) {
-            item.setOrder(order);
-            orderItemRepository.save(item);
+        // Xử lý phương thức thanh toán
+        if ("bank".equals(paymentMethod)) {
+            order.setPaymentMethod("Chờ xác nhận");
+            order.setPaymentMethod(transactionCode);  // Lưu mã giao dịch cho chuyển khoản ngân hàng
+        } else {
+            order.setPaymentMethod("Đã thanh toán");
         }
 
+        // Lưu đơn hàng vào DB
+        orderService.saveOrder(order);
+
+        // Lưu các sản phẩm trong giỏ hàng
+        for (OrderItem item : cartService.getCartItems()) {
+            item.setOrder(order);
+            if (item.getUnitPrice() == null) {
+                item.setUnitPrice(item.getProduct().getPrice()); // Đảm bảo không để giá trị NULL
+            }
+            Measurement m = item.getMeasurement();
+            if (item.getMeasurement() != null && item.getMeasurement().getId() == null) {
+                measurementService.createMeasurement(item.getMeasurement());  // Đảm bảo bạn có MeasurementRepository
+            }
+            orderItemService.saveOrderItem(item);  // Lưu từng sản phẩm
+        }
+
+        // Xóa giỏ hàng
         cartService.clearCart();
 
+        // Thêm thông báo thành công
+        redirectAttributes.addFlashAttribute("message", "Đặt hàng thành công!");
+
+        // Chuyển hướng đến trang danh sách đơn hàng với userId
         return "redirect:/order/list?userId=" + userId;
     }
 
     // Xem danh sách đơn hàng
     @GetMapping("/order/list")
     public String listOrders(@RequestParam Long userId, Model model) {
-        User user = userRepository.findById(userId.intValue())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userService.getUserById(userId.intValue());
 
-        List<Order> orders = orderRepository.findByUser(user);
+        List<Order> orders = orderService.findByUser(user);
         model.addAttribute("orders", orders);
-        model.addAttribute("userId", userId); // để dùng khi link
+        model.addAttribute("userId", userId);
         return "order_list";
     }
 
     // Xem chi tiết đơn hàng
     @GetMapping("/order/detail/{id}")
-    public String orderDetail(@PathVariable Long id, Model model) {
-        Order order = orderRepository.findById(id.intValue())
-                .orElseThrow(() -> new RuntimeException("Order not found"));
-        model.addAttribute("order", order);
+    public String orderDetail(@PathVariable Integer id, Model model) {
+        List<Order> order = orderService.findById(id);
+        if (!order.isEmpty()) {
+            model.addAttribute("order", order.get(0));
+        } else {
+            model.addAttribute("errorMessage", "Không tìm thấy đơn hàng.");
+        }
         return "order_detail";
     }
 
+    // Admin - Xem danh sách đơn hàng
     @GetMapping("/admin/orders")
-    public String listOrders(
-            Model model
-    ) {
+    public String listOrders(Model model) {
         List<Order> orders = orderService.getAllOrders();
         model.addAttribute("orders", orders);
         return "admin/order-manager";
     }
 
+    // Admin - Xem chi tiết đơn hàng
     @GetMapping("/admin/orders/{id}")
     public String viewOrderDetail(@PathVariable Integer id, Model model) {
         Optional<Order> order = orderService.getOrderById(id);
@@ -109,6 +142,7 @@ public class OrderController {
         return "redirect:/admin/orders";
     }
 
+    // Admin - Cập nhật trạng thái đơn hàng
     @PutMapping("/admin/orders/{id}/status")
     public String updateOrderStatus(
             @PathVariable Integer id,
@@ -119,18 +153,20 @@ public class OrderController {
             orderService.updateOrderStatus(id, status);
         } catch (Exception e) {
             // Log the error if needed
+            e.printStackTrace();
         }
         return returnUrl != null ? "redirect:" + returnUrl : "redirect:/admin/orders";
     }
 
+    // Admin - Xóa đơn hàng
     @GetMapping("/admin/orders/{id}/delete")
     public String deleteOrder(@PathVariable Integer id, @RequestParam(required = false) String returnUrl) {
         try {
             orderService.deleteOrder(id);
         } catch (Exception e) {
             // Log the error if needed
+            e.printStackTrace();
         }
         return returnUrl != null ? "redirect:" + returnUrl : "redirect:/admin/orders";
     }
-
 }

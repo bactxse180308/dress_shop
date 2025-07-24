@@ -2,6 +2,7 @@ package hsf302.assignment.service.impl;
 
 import hsf302.assignment.Enum.OrderStatusEnum;
 import hsf302.assignment.pojo.Order;
+import hsf302.assignment.pojo.User;
 import hsf302.assignment.repository.OrderRepository;
 import hsf302.assignment.service.OrderService;
 import lombok.AllArgsConstructor;
@@ -47,6 +48,18 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order saveOrder(Order order) {
         return orderRepository.save(order);
+    }
+
+    @Override
+    public List<Order> findByUser(User user) {
+        return orderRepository.findByUser(user);
+    }
+
+    @Override
+    public List<Order> findById(Integer id) {
+        return orderRepository.findById(id)
+                .map(List::of)
+                .orElse(List.of());
     }
 
 
