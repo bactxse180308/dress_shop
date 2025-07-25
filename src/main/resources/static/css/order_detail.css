@@ -5,12 +5,6 @@
     box-sizing: border-box;
 }
 
-body.container {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f3f6fb;
-    color: #333;
-    padding: 40px;
-}
 
 /* Hộp chính chứa nội dung */
 .order-details {
