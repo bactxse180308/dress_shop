@@ -30,7 +30,7 @@ public class User {
     @Column(name = "phone")
     private String phone;
 
-    @Column(name = "address")
+    @Column(name = "address",columnDefinition = "nvarchar(255)")
     private String address;
 
     private LocalDateTime createdAt = LocalDateTime.now();

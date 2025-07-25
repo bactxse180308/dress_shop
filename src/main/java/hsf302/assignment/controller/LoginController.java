@@ -35,7 +35,7 @@ public class LoginController {
 
         session.setAttribute("userId", user.getId());
         session.setAttribute("userRole", user.getRole().name());
-
+        session.setAttribute("user", user);
         // Chuyển hướng tùy theo role
         if (user.getRole().name().equals("ADMIN")) {
             return "redirect:/admin/dashboard";

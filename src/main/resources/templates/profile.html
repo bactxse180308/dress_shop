@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Page</title>
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+</head>
+<body>
+<div class="container">
+    <h1 class="title">Profile Page</h1>
+    <p class="welcome">Welcome, <strong th:text="${user.name}">User Name</strong>!</p>
+
+    <table class="profile-table">
+        <tr>
+            <th>Email</th>
+            <td th:text="${user.email}">user@email.com</td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td th:text="${user.address}">User Address</td>
+        </tr>
+        <tr>
+            <th>Phone</th>
+            <td th:text="${user.phone}">User Phone</td>
+        </tr>
+    </table>
+
+
+    <div class="btn-container">
+        <a th:href="@{/profile/edit}" class="btn">Edit Profile</a>
+        <a th:href="@{/home}" class="btn btn-secondary">Trang chủ</a>
+    </div>
+
+</div>
+</body>
+</html>
