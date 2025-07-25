@@ -16,4 +16,31 @@ public class StyleServiceImpl implements StyleService {
     public List<Style> findAll() {
         return styleRepository.findAll();
     }
+
+    @Override
+    public Style findById(Integer id) {
+        return styleRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Style save(Style style) {
+        return styleRepository.save(style);
+    }
+
+    @Override
+    public Style update(Integer id, Style styleDetails) {
+        Style existingStyle = findById(id);
+        if (existingStyle != null) {
+            existingStyle.setName(styleDetails.getName());
+            existingStyle.setDescription(styleDetails.getDescription());
+            return styleRepository.save(existingStyle);
+        }
+        return null; // Hoặc ném ra một exception
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        styleRepository.deleteById(id);
+
+    }
 }

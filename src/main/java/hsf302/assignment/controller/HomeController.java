@@ -13,7 +13,7 @@ public class HomeController {
 
     private final ProductService productService;
 
-    @GetMapping("/")
+    @GetMapping("/home")
     public String home(Model model) {
         // Lấy danh sách sản phẩm mới nhất
         model.addAttribute("newProducts", productService.getNewestProducts());

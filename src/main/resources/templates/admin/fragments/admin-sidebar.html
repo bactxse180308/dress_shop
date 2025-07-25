@@ -15,26 +15,11 @@
         th:classappend="${currentUri.contains('/dashboard')} ? 'active'"
       >
         <i class="fas fa-tachometer-alt"></i>
-        <span>Dashboard</span>
+        <span>Quản lý User</span>
       </a>
     </li>
 
-    <li class="nav-item">
-      <a
-        href="/admin/users"
-        class="nav-link"
-        th:classappend="${currentUri.contains('/users')} ? 'active'"
-      >
-        <i class="fas fa-users"></i>
-        <span>Quản lý User</span>
-        <span
-          class="nav-badge"
-          th:if="${newUsersCount > 0}"
-          th:text="${newUsersCount}"
-          >5</span
-        >
-      </a>
-    </li>
+
 
     <li class="nav-item">
       <a
@@ -91,10 +76,9 @@
         ></i>
       </a>
       <ul class="nav-dropdown" id="catalogDropdown">
-        <li><a href="/admin/categories" class="nav-link">Categories</a></li>
+
         <li><a href="/admin/styles" class="nav-link">Styles</a></li>
         <li><a href="/admin/fabrics" class="nav-link">Fabrics</a></li>
-        <li><a href="/admin/measurements" class="nav-link">Measurements</a></li>
       </ul>
     </li>
 
@@ -109,15 +93,6 @@
       </a>
     </li>
 
-    <li class="nav-item">
-      <a
-        href="/admin/settings"
-        class="nav-link"
-        th:classappend="${currentUri.contains('/settings')} ? 'active'"
-      >
-        <i class="fas fa-cog"></i>
-        <span>Cài đặt</span>
-      </a>
-    </li>
+    
   </ul>
 </div>
