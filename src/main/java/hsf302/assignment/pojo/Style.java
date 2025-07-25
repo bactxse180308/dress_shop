@@ -18,7 +18,7 @@ public class Style {
     @Column(name = "name", columnDefinition = "NVARCHAR(100)")
     private String name;
 
-    @Lob
+    @Column(name = "description", columnDefinition = "NVARCHAR(100)")
     private String description;
 
     @OneToMany(mappedBy = "style")

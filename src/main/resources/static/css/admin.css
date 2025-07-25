@@ -156,6 +156,45 @@
   margin-bottom: 0.5rem;
 }
 
+.logout-item {
+  padding: 15px 20px; /* Thêm padding trên dưới và trái phải */
+}
+
+/* Định nghĩa style chính cho nút Logout */
+.btn-logout {
+  /* Kích thước và căn chỉnh */
+  display: flex;
+  justify-content: center; /* Căn giữa nội dung (icon và text) theo chiều ngang */
+  align-items: center;     /* Căn giữa nội dung theo chiều dọc */
+  width: 100%;             /* Chiếm toàn bộ chiều rộng của container */
+  padding: 10px 15px;      /* Khoảng đệm bên trong nút */
+
+  /* Giao diện (Màu sắc và Bo tròn) */
+  background-color: #dc3545; /* Màu đỏ (màu "danger" của Bootstrap) */
+  color: white;              /* Màu chữ trắng để nổi bật */
+  border: none;              /* Không có đường viền */
+  border-radius: 30px;       /* Bo tròn các góc để tạo thành hình viên thuốc */
+
+  /* Chữ và con trỏ */
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  /* Hiệu ứng chuyển động mượt mà */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Thêm khoảng cách giữa icon và chữ "Đăng xuất" */
+.btn-logout i {
+  margin-right: 8px;
+}
+
+/* Thêm hiệu ứng khi di chuột vào */
+.btn-logout:hover {
+  background-color: #c82333; /* Làm màu đỏ đậm hơn một chút */
+  transform: translateY(-2px); /* Nút hơi nhích lên một chút */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
 /* Responsive */
 @media (max-width: 768px) {
   .sidebar {

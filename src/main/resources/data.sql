@@ -1,11 +1,11 @@
 INSERT INTO [DressOfficeShop].[dbo].[users]
 ([address], [created_at], [email], [name], [password_hash], [phone], [role])
 VALUES
-    ('123 Đường ABC, TP.HCM', GETDATE(), 'alice@example.com', 'Alice Nguyen', 'hash123', '0912345678', 'USER'),
-    ('456 Đường XYZ, Hà Nội', GETDATE(), 'bob@example.com', 'Bob Tran', 'hash456', '0987654321', 'USER'),
-    ('789 Đường DEF, Đà Nẵng', GETDATE(), 'charlie@example.com', 'Charlie Le', 'hash789', '0909090909', 'USER'),
-    ('321 Đường QWE, Cần Thơ', GETDATE(), 'dana@example.com', 'Dana Pham', 'hash321', '0933333333', 'ADMIN'),
-    ('654 Đường RTY, Huế', GETDATE(), 'edward@example.com', 'Edward Vo', 'hash654', '0944444444', 'USER');
+    (N'123 Đường ABC, TP.HCM', GETDATE(), 'alice@example.com', 'Alice Nguyen', 'hash123', '0912345678', 'USER'),
+    (N'456 Đường XYZ, Hà Nội', GETDATE(), 'bob@example.com', 'Bob Tran', 'hash456', '0987654321', 'USER'),
+    (N'789 Đường DEF, Đà Nẵng', GETDATE(), 'charlie@example.com', 'Charlie Le', 'hash789', '0909090909', 'USER'),
+    (N'321 Đường QWE, Cần Thơ', GETDATE(), 'dana@example.com', 'Dana Pham', 'hash321', '0933333333', 'ADMIN'),
+    (N'654 Đường RTY, Huế', GETDATE(), 'edward@example.com', 'Edward Vo', 'hash654', '0944444444', 'USER');
 
 INSERT INTO [DressOfficeShop].[dbo].[fabrics] ([name], [description])
 VALUES

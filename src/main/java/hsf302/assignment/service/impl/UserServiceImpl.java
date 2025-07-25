@@ -70,6 +70,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User updateUserProfile(User user) {
+        User existingUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + user.getId()));
+
+        existingUser.setName(user.getName());
+        existingUser.setEmail(user.getEmail());
+        existingUser.setPhone(user.getPhone());
+        existingUser.setAddress(user.getAddress());
+
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        return userRepository.save(existingUser);
+    }
+
+
+    @Override
     public Optional<Object> findById(Integer id) {
         return userRepository.findById(id)
                 .map(user -> (Object) user); // Trả về Optional chứa User hoặc null nếu không tìm thấy

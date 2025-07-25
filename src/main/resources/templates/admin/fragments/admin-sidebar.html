@@ -15,26 +15,11 @@
         th:classappend="${currentUri.contains('/dashboard')} ? 'active'"
       >
         <i class="fas fa-tachometer-alt"></i>
-        <span>Dashboard</span>
+        <span>Quản lý User</span>
       </a>
     </li>
 
-    <li class="nav-item">
-      <a
-        href="/admin/users"
-        class="nav-link"
-        th:classappend="${currentUri.contains('/users')} ? 'active'"
-      >
-        <i class="fas fa-users"></i>
-        <span>Quản lý User</span>
-        <span
-          class="nav-badge"
-          th:if="${newUsersCount > 0}"
-          th:text="${newUsersCount}"
-          >5</span
-        >
-      </a>
-    </li>
+
 
     <li class="nav-item">
       <a
@@ -91,10 +76,9 @@
         ></i>
       </a>
       <ul class="nav-dropdown" id="catalogDropdown">
-        <li><a href="/admin/categories" class="nav-link">Categories</a></li>
+
         <li><a href="/admin/styles" class="nav-link">Styles</a></li>
         <li><a href="/admin/fabrics" class="nav-link">Fabrics</a></li>
-        <li><a href="/admin/measurements" class="nav-link">Measurements</a></li>
       </ul>
     </li>
 
@@ -108,16 +92,17 @@
         <span>Báo cáo</span>
       </a>
     </li>
-
-    <li class="nav-item">
-      <a
-        href="/admin/settings"
-        class="nav-link"
-        th:classappend="${currentUri.contains('/settings')} ? 'active'"
-      >
-        <i class="fas fa-cog"></i>
-        <span>Cài đặt</span>
-      </a>
+    <li class="nav-item logout-item">
+      <form th:action="@{/admin/logout}" method="post" style="width: 100%;">
+        <!-- Dùng một class riêng biệt 'btn-logout' cho nút bấm -->
+        <button type="submit" class="btn-logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Đăng xuất</span>
+        </button>
+      </form>
     </li>
+
+    
   </ul>
 </div>
+
