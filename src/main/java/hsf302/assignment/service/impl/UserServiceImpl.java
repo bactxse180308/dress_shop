@@ -1,11 +1,11 @@
 package hsf302.assignment.service.impl;
 
+import hsf302.assignment.exception.ResourceNotFoundException;
 import hsf302.assignment.pojo.User;
 import hsf302.assignment.repository.UserRepository;
 import hsf302.assignment.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import hsf302.assignment.exception.ResourceNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +25,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
     public User getUserById(Integer id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
@@ -36,6 +41,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    // Cho người dùng tự cập nhật thông tin (không đổi role)
     @Override
     public User updateUser(Integer id, User userDetails) {
         User user = getUserById(id);
@@ -51,10 +57,42 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    // Cho admin cập nhật thông tin người dùng
+    @Override
+    public User updateUserByAdmin(Integer id, User userDetails) {
+        User user = getUserById(id);
+        user.setName(userDetails.getName());
+        user.setEmail(userDetails.getEmail());
+        user.setPhone(userDetails.getPhone());
+        user.setAddress(userDetails.getAddress());
+        user.setRole(userDetails.getRole());
+
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        }
+
+        return userRepository.save(user);
+    }
+
     @Override
     public void deleteUser(Integer id) {
         userRepository.deleteById(id);
     }
+
+    // Cho admin xóa người dùng
+    @Override
+    public void deleteUserByAdmin(Integer targetUserId, Integer currentUserId) {
+        if (targetUserId.equals(currentUserId)) {
+            throw new IllegalArgumentException("Không thể tự xóa chính mình.");
+        }
+
+        if (!userRepository.existsById(targetUserId)) {
+            throw new ResourceNotFoundException("Người dùng không tồn tại với ID: " + targetUserId);
+        }
+
+        userRepository.deleteById(targetUserId);
+    }
+
     @Override
     public boolean existsByEmail(String email) {
         return userRepository.findByEmail(email).isPresent();
@@ -64,7 +102,7 @@ public class UserServiceImpl implements UserService {
     public User findByEmailAndPassword(String email, String password) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            return  null;
+            return null;
         }
         return passwordEncoder.matches(password, user.getPassword()) ? user : null;
     }
@@ -86,11 +124,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(existingUser);
     }
 
-
     @Override
     public Optional<Object> findById(Integer id) {
         return userRepository.findById(id)
-                .map(user -> (Object) user); // Trả về Optional chứa User hoặc null nếu không tìm thấy
+                .map(user -> (Object) user);
     }
-
 }

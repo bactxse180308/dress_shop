@@ -18,10 +18,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/css/global.css}" type="text/css" />
   <link rel="stylesheet" th:href="@{/style/order_detail.css}" type="text/css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
     .measurement-details {
       background: #f8f9fa;
       border-radius: 8px;
@@ -128,6 +126,7 @@
           <th>Số lượng</th>
           <th>Giá</th>
           <th>Thành tiền</th>
+          <th>Thao tác</th>
         </tr>
         </thead>
         <tbody>
@@ -200,6 +199,25 @@
           <td th:text="${item.quantity}">1</td>
           <td th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">0</td>
           <td th:text="${#numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'">0</td>
+          <td>
+            <div class="d-flex gap-2">
+              <span th:if="${reviewedProducts[item.product.id] != null}">
+      <button type="button" class="btn btn-success view-review-btn"
+              th:data-product-id="${item.product.id}"
+              title="Xem lại đánh giá">
+  <i class="bi bi-eye"></i> Xem lại đánh giá
+</button>
+    </span>
+              <span th:if="${reviewedProducts[item.product.id] == null}">
+      <button type="button" class="btn btn-primary review-product-btn"
+              th:data-product-id="${item.product.id}"
+              th:data-user-id="${order.user.id}"
+              title="Đánh giá">
+        <i class="bi bi-star"></i> Đánh giá
+      </button>
+    </span>
+            </div>
+          </td>
         </tr>
         </tbody>
       </table>
@@ -214,7 +232,155 @@
 <!-- Footer -->
 <div th:replace="fragments/footer :: footer"></div>
 
-<!-- Scripts -->
+<div class="modal fade" id="reviewProductModal" tabindex="-1" aria-labelledby="reviewProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="reviewProductForm" method="post" th:action="@{/reviews/add}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reviewProductModalLabel">Đánh giá sản phẩm</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="reviewProductId" name="productId"/>
+          <input type="hidden" id="reviewOrderId" name="orderId" th:value="${order.id}"/>
+            <input type="hidden" id="reviewUserId" name="userId"/>
+          <div class="mb-3">
+            <label for="reviewRating" class="form-label">Đánh giá</label>
+            <select class="form-select" id="reviewRating" name="rating" required>
+              <option value="">-- Chọn số sao --</option>
+              <option value="5">5 sao - Xuất sắc</option>
+              <option value="4">4 sao - Tốt</option>
+              <option value="3">3 sao - Bình thường</option>
+              <option value="2">2 sao - Kém</option>
+              <option value="1">1 sao - Rất tệ</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="reviewContent" class="form-label">Nội dung nhận xét</label>
+            <textarea id="reviewContent" name="content" class="form-control" rows="4" required placeholder="Hãy chia sẻ cảm nhận của bạn về sản phẩm..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="viewReviewModal" tabindex="-1" aria-labelledby="viewReviewModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewReviewModalLabel">Xem lại đánh giá</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <strong>Số sao:</strong> <span id="reviewViewRating"></span> / 5
+        </div>
+        <div class="mt-2">
+          <strong>Nội dung:</strong>
+          <div id="reviewViewContent" class="mt-1"></div>
+        </div>
+        <div class="mt-2 text-muted" style="font-size:13px;">
+          <span id="reviewViewDate"></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- reviewedProducts must be defined first -->
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  var reviewedProducts = /*[[${reviewedProducts}]]*/ {};
+  console.log('reviewedProducts from Thymeleaf:', reviewedProducts);
+  console.log('reviewedProducts type:', typeof reviewedProducts);
+  console.log('reviewedProducts keys:', Object.keys(reviewedProducts));
+  /*]]>*/
+</script>
+
+<!-- JavaScript functions -->
+<script>
+  // Đợi DOM tải xong
+  document.addEventListener('DOMContentLoaded', function() {
+    
+    // Định nghĩa hàm viewReview
+    window.viewReview = function(productId) {
+      console.log('=== viewReview DEBUG ===');
+      console.log('viewReview called with productId:', productId);
+      console.log('productId type:', typeof productId);
+      console.log('reviewedProducts:', reviewedProducts);
+      console.log('reviewedProducts keys:', Object.keys(reviewedProducts));
+      
+      // Thử cả string và number
+      var review = reviewedProducts[productId] || reviewedProducts[String(productId)] || reviewedProducts[parseInt(productId)];
+      
+      console.log('Found review:', review);
+      
+      if (review) {
+        console.log('Review object:', review);
+        console.log('Review.rating:', review.rating);
+        console.log('Review.comment:', review.comment);
+        console.log('Review.content:', review.content);
+        console.log('Review.createdAt:', review.createdAt);
+        
+        document.getElementById('reviewViewRating').textContent = review.rating;
+        document.getElementById('reviewViewContent').textContent = review.comment || review.content; // Thử cả 2
+        document.getElementById('reviewViewDate').textContent = review.createdAt
+          ? ("Ngày đánh giá: " + review.createdAt)
+          : "";
+        
+        var modal = new bootstrap.Modal(document.getElementById('viewReviewModal'));
+        modal.show();
+      } else {
+        console.log('No review found for product:', productId);
+        console.log('Available product IDs:', Object.keys(reviewedProducts));
+        alert('Không tìm thấy đánh giá cho sản phẩm này.');
+      }
+    };
+
+    // Định nghĩa hàm reviewProduct
+    window.reviewProduct = function(productId, userId) {
+      console.log('reviewProduct called with productId:', productId, 'userId:', userId);
+      
+      document.getElementById('reviewProductId').value = productId;
+      document.getElementById('reviewUserId').value = userId;
+      document.getElementById('reviewContent').value = '';
+      document.getElementById('reviewRating').value = '';
+      
+      var reviewModal = new bootstrap.Modal(document.getElementById('reviewProductModal'));
+      reviewModal.show();
+    };
+
+    // Thêm event listeners cho các nút
+    document.addEventListener('click', function(e) {
+      // Event listener cho nút "Xem lại đánh giá"
+      if (e.target.closest('.view-review-btn')) {
+        e.preventDefault();
+        const productId = e.target.closest('.view-review-btn').getAttribute('data-product-id');
+        viewReview(productId);
+      }
+      
+      // Event listener cho nút "Đánh giá"
+      if (e.target.closest('.review-product-btn')) {
+        e.preventDefault();
+        const productId = e.target.closest('.review-product-btn').getAttribute('data-product-id');
+        const userId = e.target.closest('.review-product-btn').getAttribute('data-user-id');
+        reviewProduct(productId, userId);
+      }
+    });
+    
+  });
+</script>
+
 </body>
 </html>

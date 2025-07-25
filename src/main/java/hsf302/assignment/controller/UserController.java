@@ -1,64 +1,36 @@
 package hsf302.assignment.controller;
 
-
-
-import hsf302.assignment.exception.ResourceNotFoundException;
 import hsf302.assignment.pojo.User;
-import hsf302.assignment.service.UserService;
-import jakarta.validation.Valid;
+import hsf302.assignment.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
-@Validated
 public class UserController {
-
-    private final UserService userService;
-
+    
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
-
-    @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(userService.createUser(user));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Integer id) {
-        User user = userService.getUserById(id);
-        return ResponseEntity.ok(user);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(
-            @PathVariable Integer id,
-            @Valid @RequestBody User userDetails) {
-        return ResponseEntity.ok(userService.updateUser(id, userDetails));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
+    
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestParam String email, @RequestParam String newPassword) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }
