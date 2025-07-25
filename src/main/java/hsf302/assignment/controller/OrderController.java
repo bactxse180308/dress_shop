@@ -8,6 +8,7 @@ import hsf302.assignment.pojo.User;
 import hsf302.assignment.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -168,5 +169,53 @@ public class OrderController {
             e.printStackTrace();
         }
         return returnUrl != null ? "redirect:" + returnUrl : "redirect:/admin/orders";
+    }
+
+    // User - Xóa đơn hàng (chỉ cho phép xóa đơn Complete hoặc Cancelled)
+    @PostMapping("/order/delete/{id}")
+    @Transactional
+    public String deleteUserOrder(@PathVariable Integer id, @RequestParam Long userId, RedirectAttributes redirectAttributes) {
+        try {
+            System.out.println("=== DEBUG: Bắt đầu xóa đơn hàng ===");
+            System.out.println("Order ID: " + id);
+            System.out.println("User ID: " + userId);
+            
+            // Kiểm tra đơn hàng có tồn tại và thuộc về user này không
+            Optional<Order> optionalOrder = orderService.getOrderById(id);
+            if (optionalOrder.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy đơn hàng #" + id);
+                return "redirect:/order/list?userId=" + userId;
+            }
+            
+            Order order = optionalOrder.get();
+            
+            // Kiểm tra quyền sở hữu
+            if (!order.getUser().getId().equals(userId.intValue())) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền xóa đơn hàng này");
+                return "redirect:/order/list?userId=" + userId;
+            }
+            
+            // Kiểm tra trạng thái đơn hàng
+            OrderStatusEnum status = order.getStatus();
+            if (status != OrderStatusEnum.Completed && status != OrderStatusEnum.Cancelled) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Chỉ có thể xóa đơn hàng đã hoàn thành hoặc đã hủy");
+                return "redirect:/order/list?userId=" + userId;
+            }
+            
+            System.out.println("Order Status: " + status);
+            System.out.println("Cho phép xóa đơn hàng");
+            
+            // Thực hiện xóa đơn hàng
+            orderService.deleteOrder(id);
+            System.out.println("Đã gọi deleteOrder method");
+            
+            redirectAttributes.addFlashAttribute("message", "Đã xóa thành công đơn hàng #" + id);
+            
+        } catch (Exception e) {
+            System.out.println("Lỗi khi xóa đơn hàng: " + e.getMessage());
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra khi xóa đơn hàng: " + e.getMessage());
+        }
+        return "redirect:/order/list?userId=" + userId;
     }
 }

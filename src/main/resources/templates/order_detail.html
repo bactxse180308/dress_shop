@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Chi tiết đơn hàng</title>
   <link
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
@@ -12,8 +13,74 @@
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
   />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/css/global.css}" type="text/css" />
   <link rel="stylesheet" th:href="@{/style/order_detail.css}" type="text/css" />
+  <style>
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .measurement-details {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+      border-left: 4px solid #007bff;
+    }
+    .measurement-item {
+      display: inline-block;
+      background: #e3f2fd;
+      padding: 4px 10px;
+      margin: 3px 2px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1976d2;
+      border: 1px solid #bbdefb;
+    }
+    .measurement-item i {
+      margin-right: 4px;
+      color: #1976d2;
+    }
+    .measurement-note {
+      font-style: italic;
+      color: #666;
+      margin-top: 8px;
+      padding: 6px;
+      background: #fff3e0;
+      border-radius: 4px;
+      border-left: 3px solid #ff9800;
+    }
+    .size-badge {
+      display: inline-block;
+      background: #28a745;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .product-table {
+      font-size: 14px;
+    }
+    .product-table th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .product-table td {
+      vertical-align: middle;
+    }
+    @media (max-width: 768px) {
+      .measurement-item {
+        display: block;
+        margin: 2px 0;
+      }
+    }
+  </style>
 </head>
 <body>
 <!-- Navigation -->
@@ -56,7 +123,8 @@
         <tr>
           <th>Hình ảnh</th>
           <th>Sản phẩm</th>
-          <th>Size</th> <!-- Added Size Column -->
+          <th>Size</th>
+          <th>Phụ kiện</th>
           <th>Số lượng</th>
           <th>Giá</th>
           <th>Thành tiền</th>
@@ -78,10 +146,60 @@
                  width="100" height="100"/>
           </td>
           <td th:text="${item.product.name}">Tên sản phẩm</td>
-          <td th:text="${item.getMeasurement().getNote()}">Size</td> <!-- Display the size here -->
+          <td>
+            <div th:if="${item.measurement != null}">
+              <strong class="text-primary">custom</strong>
+              <div class="measurement-details">
+                <div th:if="${item.measurement.bustSize != null}" class="measurement-item">
+                  <i class="fas fa-ruler"></i> Ngực: [[${item.measurement.bustSize}]]cm
+                </div>
+                <div th:if="${item.measurement.waistSize != null}" class="measurement-item">
+                  <i class="fas fa-ruler"></i> Eo: [[${item.measurement.waistSize}]]cm
+                </div>
+                <div th:if="${item.measurement.hipsSize != null}" class="measurement-item">
+                  <i class="fas fa-ruler"></i> Hông: [[${item.measurement.hipsSize}]]cm
+                </div>
+                <div th:if="${item.measurement.buttSize != null}" class="measurement-item">
+                  <i class="fas fa-ruler"></i> Mông: [[${item.measurement.buttSize}]]cm
+                </div>
+                <div th:if="${item.measurement.armLength != null}" class="measurement-item">
+                  <i class="fas fa-ruler"></i> Dài tay: [[${item.measurement.armLength}]]cm
+                </div>
+                <div th:if="${item.measurement.shoulderWidth != null}" class="measurement-item">
+                  <i class="fas fa-ruler"></i> Rộng vai: [[${item.measurement.shoulderWidth}]]cm
+                </div>
+                <div th:if="${item.measurement.neckSize != null}" class="measurement-item">
+                  <i class="fas fa-ruler"></i> Vòng cổ: [[${item.measurement.neckSize}]]cm
+                </div>
+                <div th:if="${item.measurement.skirtLength != null}" class="measurement-item">
+                  <i class="fas fa-ruler"></i> Dài váy: [[${item.measurement.skirtLength}]]cm
+                </div>
+                <div th:if="${item.measurement.hipDrop != null}" class="measurement-item">
+                  <i class="fas fa-ruler"></i> Eo-Hông: [[${item.measurement.hipDrop}]]cm
+                </div>
+                <div th:if="${item.measurement.waistDrop != null}" class="measurement-item">
+                  <i class="fas fa-ruler"></i> Vai-Eo: [[${item.measurement.waistDrop}]]cm
+                </div>
+                <div th:if="${item.measurement.note != null}" class="measurement-note">
+                  <i class="fas fa-sticky-note"></i> <em th:text="${item.measurement.note}">Ghi chú</em>
+                </div>
+              </div>
+            </div>
+            <div th:if="${item.measurement == null}">
+              <span th:if="${item.size != null}" class="size-badge">Size: [[${item.size}]]</span>
+              <span th:if="${item.size == null}" class="text-muted">Chưa chọn size</span>
+            </div>
+          </td>
+          <td>
+            <ul th:if="${item.decorations != null and not #lists.isEmpty(item.decorations)}" class="list-unstyled mb-0">
+              <li th:each="d : ${item.decorations}"
+                  th:text="${d.name + ' (+' + #numbers.formatDecimal(d.extraPrice, 0, 'COMMA', 0, 'POINT') + '₫)'}"></li>
+            </ul>
+            <span th:if="${item.decorations == null or #lists.isEmpty(item.decorations)}">-</span>
+          </td>
           <td th:text="${item.quantity}">1</td>
-          <td th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')}">0</td>
-          <td th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'COMMA', 0, 'POINT')}">0</td>
+          <td th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">0</td>
+          <td th:text="${#numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'">0</td>
         </tr>
         </tbody>
       </table>

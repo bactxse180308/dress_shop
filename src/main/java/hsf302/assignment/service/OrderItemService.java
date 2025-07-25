@@ -2,6 +2,7 @@ package hsf302.assignment.service;
 
 import hsf302.assignment.pojo.OrderItem;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface OrderItemService {
@@ -14,4 +15,5 @@ public interface OrderItemService {
      void updateOrderItem(OrderItem orderItem);
 
  void saveOrderItem(OrderItem item);
+ public BigDecimal calculateTotal();
 }

@@ -62,7 +62,7 @@ public class ProductController {
         List<Review> reviews = reviewService.getAllReviewsByProductId(id);
         model.addAttribute("reviews", reviews);
         model.addAttribute("product", product);
-        model.addAttribute("decorations", decorationService.getAll());
+        model.addAttribute("decorations", decorationService.findAll());
         return "product-detail";
     }
 

@@ -49,5 +49,14 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Measurement> measurements = new LinkedHashSet<>();
 
-    // Getters and Setters
+    // Manual getter for ID (due to Lombok issues)
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    // Other getters and setters handled by Lombok
 }

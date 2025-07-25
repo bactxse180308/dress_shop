@@ -15,32 +15,12 @@ public class DecorationServiceImpl implements DecorationService {
     private final DecorationRepository decorationRepository;
 
     @Override
-    public List<Decoration> getAll() {
+    public List<Decoration> findAll() {
         return decorationRepository.findAll();
     }
 
     @Override
-    public Decoration getById(Integer id) {
-        return decorationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Decoration not found with id: " + id));
-    }
-
-    @Override
-    public Decoration create(Decoration decoration) {
-        return decorationRepository.save(decoration);
-    }
-
-    @Override
-    public Decoration update(Integer id, Decoration decoration) {
-        Decoration existing = getById(id);
-        existing.setName(decoration.getName());
-        existing.setDescription(decoration.getDescription());
-        existing.setExtraPrice(decoration.getExtraPrice());
-        return decorationRepository.save(existing);
-    }
-
-    @Override
-    public void delete(Integer id) {
-        decorationRepository.deleteById(id);
+    public List<Decoration> findAllById(List<Integer> ids) {
+        return decorationRepository.findAllById(ids);
     }
 }

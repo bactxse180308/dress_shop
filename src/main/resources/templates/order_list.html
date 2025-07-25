@@ -44,8 +44,8 @@
                 <th>Ngày đặt</th>
                 <th>Trạng thái</th>
                 <th>Tổng tiền</th>
-                <th>Hình ảnh sản phẩm</th> <!-- Added image column -->
-                <th>Chi tiết</th>
+                <th>Hình ảnh sản phẩm</th>
+                <th>Thao tác</th>
             </tr>
             </thead>
             <tbody>
@@ -67,7 +67,19 @@
                 </td>
 
                 <td>
-                    <a class="btn btn-primary" th:href="@{'/order/detail/' + ${order.id}}">Xem chi tiết</a>
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-primary btn-sm" th:href="@{'/order/detail/' + ${order.id}}">Xem chi tiết</a>
+                        <form th:if="${order.status.toString() == 'Completed' or order.status.toString() == 'Cancelled'}" 
+                              th:action="@{'/order/delete/' + ${order.id}}" 
+                              method="post" 
+                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?');"
+                              style="display: inline;">
+                            <input type="hidden" name="userId" th:value="${userId != null ? userId : 1}"/>
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash"></i> Xóa
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             </tbody>
