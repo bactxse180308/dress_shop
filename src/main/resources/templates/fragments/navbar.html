@@ -13,7 +13,7 @@
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/">TRANG CHỦ</a>
+                        <a class="nav-link active" href="/home">TRANG CHỦ</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/products?newest">SẢN PHẨM MỚI</a>
@@ -42,9 +42,36 @@
                     <a href="#" class="text-decoration-none text-danger fs-5">
                         <i class="bi bi-heart-fill"></i>
                     </a>
-                    <a th:href="@{/profile}" class="text-decoration-none text-dark fs-5">
-                        <i class="bi bi-person"></i>
-                    </a>
+                    <div class="dropdown">
+                        <!-- 1. Đây là icon user, giờ nó sẽ là NÚT KÍCH HOẠT dropdown -->
+                        <a href="#" class="text-decoration-none text-dark fs-5" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person"></i>
+                        </a>
+
+                        <!-- 2. Đây là MENU xổ xuống, ban đầu sẽ được ẩn đi -->
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <!-- Mục "Tài khoản" -->
+                            <li>
+                                <a class="dropdown-item" th:href="@{/profile}">
+                                    <i class="bi bi-person-circle me-2"></i> <!-- Thêm icon cho đẹp -->
+                                    Tài khoản của tôi
+                                </a>
+                            </li>
+
+                            <!-- Đường kẻ phân cách -->
+                            <li><hr class="dropdown-divider"></li>
+
+                            <!-- Mục "Đăng xuất" (dùng form để bảo mật) -->
+                            <li>
+                                <form th:action="@{/admin/logout}" method="post" class="d-inline">
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="bi bi-box-arrow-right me-2"></i> <!-- Thêm icon cho đẹp -->
+                                        Đăng xuất
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
 
                     <a href="http://localhost:8080/cart" class="text-decoration-none position-relative text-dark fs-5">
                         <i class="bi bi-bag"></i>
