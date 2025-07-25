@@ -1,5 +1,6 @@
 package hsf302.assignment.controller;
 
+import hsf302.assignment.Enum.UserRoleEnum;
 import hsf302.assignment.pojo.User;
 import hsf302.assignment.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -37,7 +38,7 @@ public class LoginController {
         session.setAttribute("userRole", user.getRole().name());
         session.setAttribute("user", user);
         // Chuyển hướng tùy theo role
-        if (user.getRole().name().equals("ADMIN")) {
+        if (user.getRole().equals(UserRoleEnum.ADMIN)) {
             return "redirect:/admin/dashboard";
         } else {
             return "redirect:/home";

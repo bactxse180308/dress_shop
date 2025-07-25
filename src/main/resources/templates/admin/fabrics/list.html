@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Fabrics</title>
+    <!-- Thêm các link CSS và JS của bạn ở đây -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}"> <!-- Giả sử bạn có file CSS này -->
+</head>
+<body>
+<div class="admin-layout">
+    <!-- Include Sidebar Fragment -->
+    <div th:replace="admin/fragments/admin-sidebar :: sidebar"></div>
+
+    <!-- Main Content -->
+    <div class="admin-main-content">
+        <div class="content-header">
+            <h1>Manage Fabrics</h1>
+            <a th:href="@{/admin/fabrics/add}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New Fabric
+            </a>
+        </div>
+
+        <!-- Thông báo thành công hoặc lỗi -->
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <div class="content-body">
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="fabric : ${fabrics}">
+                    <td th:text="${fabric.id}"></td>
+                    <td th:text="${fabric.name}"></td>
+                    <td th:text="${#strings.abbreviate(fabric.description, 100)}"></td>
+                    <td>
+                        <a th:href="@{'/admin/fabrics/edit/' + ${fabric.id}}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                         
+                        <a th:href="@{'/admin/fabrics/delete/' + ${fabric.id}}"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('Are you sure you want to delete this fabric?');">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Thêm các script JS của bạn ở đây -->
+</body>
+</html>
