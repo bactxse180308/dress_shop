@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -94,5 +96,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getNewestProducts() {
         return productRepository.findTop10ByOrderByCreatedAtDesc();
+    }
+
+    @Override
+    public Map<String, List<Product>> getProductsGroupedByFabric() {
+        List<Product> allProducts = productRepository.findAll();
+
+        return allProducts.stream()
+                .filter(product -> product.getFabric() != null && product.getFabric().getName() != null)
+                .collect(Collectors.groupingBy(product -> product.getFabric().getName()));
     }
 }

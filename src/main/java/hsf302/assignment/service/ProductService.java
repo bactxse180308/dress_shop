@@ -4,6 +4,7 @@ import hsf302.assignment.pojo.Product;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ProductService {
@@ -20,5 +21,6 @@ public interface ProductService {
     List<Product> searchByName(String keyword);
     List<Product> filterByPriceRange(BigDecimal min, BigDecimal max);
     List<Product> getNewestProducts();
+    Map<String, List<Product>> getProductsGroupedByFabric();
 
 }
