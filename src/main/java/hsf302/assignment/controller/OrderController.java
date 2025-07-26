@@ -70,7 +70,7 @@ public class OrderController {
         // Xử lý phương thức thanh toán
         if ("bank".equals(paymentMethod)) {
             order.setPaymentMethod("Chờ xác nhận");
-            order.setPaymentMethod(transactionCode);  // Lưu mã giao dịch cho chuyển khoản ngân hàng
+            order.setPaymentMethod(transactionCode);
         } else {
             order.setPaymentMethod("Đã thanh toán");
         }
@@ -176,10 +176,6 @@ public class OrderController {
     @Transactional
     public String deleteUserOrder(@PathVariable Integer id, @RequestParam Long userId, RedirectAttributes redirectAttributes) {
         try {
-            System.out.println("=== DEBUG: Bắt đầu xóa đơn hàng ===");
-            System.out.println("Order ID: " + id);
-            System.out.println("User ID: " + userId);
-            
             // Kiểm tra đơn hàng có tồn tại và thuộc về user này không
             Optional<Order> optionalOrder = orderService.getOrderById(id);
             if (optionalOrder.isEmpty()) {
@@ -201,14 +197,8 @@ public class OrderController {
                 redirectAttributes.addFlashAttribute("errorMessage", "Chỉ có thể xóa đơn hàng đã hoàn thành hoặc đã hủy");
                 return "redirect:/order/list?userId=" + userId;
             }
-            
-            System.out.println("Order Status: " + status);
-            System.out.println("Cho phép xóa đơn hàng");
-            
             // Thực hiện xóa đơn hàng
             orderService.deleteOrder(id);
-            System.out.println("Đã gọi deleteOrder method");
-            
             redirectAttributes.addFlashAttribute("message", "Đã xóa thành công đơn hàng #" + id);
             
         } catch (Exception e) {
