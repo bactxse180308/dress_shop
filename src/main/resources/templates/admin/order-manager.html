@@ -97,33 +97,30 @@
                             </td>
                             <td>
                                 <div class="btn-group">
-                                    <button
-                                            class="btn btn-sm btn-info"
+                                    <!-- Nút Chi tiết -->
+                                    <a
+                                            th:href="@{/admin/orders/{id}(id=${order.id})}"
+                                            class="btn btn-sm btn-info text-white text-decoration-none"
                                     >
-                                        <a
-                                                th:href="@{/admin/orders/{id}(id=${order.id})}"
-                                                class="text-white text-decoration-none"
-                                                th:text="'Chi tiết '"
-                                        ></a>
-                                        <i class="fas fa-eye"></i>
-                                    </button>
+                                        <i class="fas fa-eye"></i> Chi tiết
+                                    </a>
+
+                                    <!-- Nút Cập nhật trạng thái -->
                                     <button
                                             class="btn btn-sm btn-primary"
                                             th:onclick="'updateStatus(' + ${order.id} + ')'"
                                     >
-                                        <span>Cập nhật trạng thái</span>
-                                        <i class="fas fa-edit"></i>
+                                        <i class="fas fa-edit"></i> Cập nhật trạng thái
                                     </button>
-                                    <button
-                                            class="btn btn-sm btn-danger"
+
+                                    <!-- Nút Xóa -->
+                                    <a
+                                            th:href="@{/admin/orders/{id}/delete(id=${order.id})}"
+                                            class="btn btn-sm btn-danger text-white text-decoration-none"
                                     >
-                                        <a
-                                                th:href="@{/admin/orders/{id}/delete(id=${order.id})}"
-                                                class="text-white text-decoration-none"
-                                                th:text="'Xóa'"
-                                        ></a>
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                        <i class="fas fa-trash"></i> Xóa
+                                    </a>
+
                                 </div>
                             </td>
                         </tr>
@@ -149,7 +146,7 @@
                 ></button>
             </div>
             <div class="modal-body">
-                <form id="updateStatusForm" >
+                <form id="updateStatusForm">
                     <input type="hidden" id="updateOrderId"/>
                     <div class="mb-3">
                         <label class="form-label">Trạng thái mới</label>

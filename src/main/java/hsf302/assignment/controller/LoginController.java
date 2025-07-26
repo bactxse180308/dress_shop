@@ -42,12 +42,13 @@ public class LoginController {
             if (passwordEncoder.matches(password, user.getPassword())
                     || password.startsWith("hash")) { // ⚠️ dev/debug override
 
+                session.setAttribute("user", user);
                 session.setAttribute("userId", user.getId());
                 session.setAttribute("userRole", user.getRole().toString());
 
                 return (user.getRole() == UserRoleEnum.ADMIN)
                         ? "redirect:/admin/dashboard"
-                        : "redirect:/";
+                        : "redirect:/home";
             }
         }
 
