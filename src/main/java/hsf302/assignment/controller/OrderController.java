@@ -1,11 +1,10 @@
 package hsf302.assignment.controller;
 
 import hsf302.assignment.Enum.OrderStatusEnum;
-import hsf302.assignment.pojo.Measurement;
-import hsf302.assignment.pojo.Order;
-import hsf302.assignment.pojo.OrderItem;
-import hsf302.assignment.pojo.User;
+import hsf302.assignment.pojo.*;
 import hsf302.assignment.service.*;
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -25,15 +26,17 @@ public class OrderController {
     private final UserService userService;
     private final OrderService orderService;
     private final MeasurementService measurementService;
+    private final ReviewService reviewService;
 
     @Autowired
     public OrderController(CartService cartService, OrderItemService orderItemService,
-                           UserService userService, OrderService orderService, MeasurementService measurementService) {
+                           UserService userService, OrderService orderService, MeasurementService measurementService, ReviewService reviewService) {
         this.cartService = cartService;
         this.orderItemService = orderItemService;
         this.userService = userService;
         this.orderService = orderService;
         this.measurementService = measurementService;
+        this.reviewService = reviewService;
     }
 
     // Đặt hàng
@@ -103,7 +106,10 @@ public class OrderController {
 
     // Xem danh sách đơn hàng
     @GetMapping("/order/list")
-    public String listOrders(@RequestParam Long userId, Model model) {
+    public String listOrders(@RequestParam Long userId, Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "access-denied"; // Redirect to access denied page if session is not valid
+        }
         User user = userService.getUserById(userId.intValue());
 
         List<Order> orders = orderService.findByUser(user);
@@ -114,11 +120,53 @@ public class OrderController {
 
     // Xem chi tiết đơn hàng
     @GetMapping("/order/detail/{id}")
-    public String orderDetail(@PathVariable Integer id, Model model) {
-        List<Order> order = orderService.findById(id);
-        if (!order.isEmpty()) {
-            model.addAttribute("order", order.get(0));
+    public String orderDetail(@PathVariable Integer id, Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "access-denied"; // Redirect to access denied page if session is not valid
+        }
+        System.out.println("=== DEBUG OrderController.orderDetail ===");
+        System.out.println("Order ID: " + id);
+        
+        List<Order> orders = orderService.findById(id);
+        if (!orders.isEmpty()) {
+            Order order = orders.get(0);
+            System.out.println("Found order: " + order.getId());
+            
+            // Lấy userId từ order (giả sử order.getUser().getId())
+            Integer userId = order.getUser().getId();
+            System.out.println("User ID: " + userId);
+            
+            // Lấy danh sách các sản phẩm trong đơn hàng
+            List<OrderItem> items = order.getOrderItems();
+            System.out.println("Number of order items: " + items.size());
+            
+            // Lấy đánh giá theo đơn hàng cụ thể thay vì theo user
+            Map<Integer, Review> reviewsMap = reviewService.getReviewsMapByOrder(id);
+            System.out.println("Reviews map for order " + id + ": " + reviewsMap);
+            System.out.println("Reviews map size: " + reviewsMap.size());
+            
+            // Chuyển đổi sang DTO để tránh circular reference
+            Map<Integer, hsf302.assignment.dto.ReviewDTO> reviewedProducts = new HashMap<>();
+            for (Map.Entry<Integer, Review> entry : reviewsMap.entrySet()) {
+                Review review = entry.getValue();
+                if (review != null) {
+                    hsf302.assignment.dto.ReviewDTO dto = new hsf302.assignment.dto.ReviewDTO(
+                        review.getId(),
+                        review.getRating(),
+                        review.getComment(),
+                        review.getCreatedAt(),
+                        review.getProduct().getId(),
+                        review.getUser().getId()
+                    );
+                    reviewedProducts.put(entry.getKey(), dto);
+                    System.out.println("Added ReviewDTO for product " + entry.getKey() + ": " + dto);
+                }
+            }
+            
+            model.addAttribute("order", order);
+            model.addAttribute("reviewedProducts", reviewedProducts);
         } else {
+            System.out.println("Order not found with ID: " + id);
             model.addAttribute("errorMessage", "Không tìm thấy đơn hàng.");
         }
         return "order_detail";
@@ -126,7 +174,10 @@ public class OrderController {
 
     // Admin - Xem danh sách đơn hàng
     @GetMapping("/admin/orders")
-    public String listOrders(Model model) {
+    public String listOrders(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null || !session.getAttribute("userRole").equals("ADMIN")) {
+            return "access-denied"; // Redirect to access denied page if session is not valid
+        }
         List<Order> orders = orderService.getAllOrders();
         model.addAttribute("orders", orders);
         return "admin/order-manager";
@@ -134,7 +185,10 @@ public class OrderController {
 
     // Admin - Xem chi tiết đơn hàng
     @GetMapping("/admin/orders/{id}")
-    public String viewOrderDetail(@PathVariable Integer id, Model model) {
+    public String viewOrderDetail(@PathVariable Integer id, Model model , HttpSession session) {
+        if (session.getAttribute("user") == null || !session.getAttribute("userRole").equals("ADMIN")) {
+            return "access-denied"; // Redirect to access denied page if session is not valid
+        }
         Optional<Order> order = orderService.getOrderById(id);
         if (order.isPresent()) {
             model.addAttribute("order", order.get());
@@ -148,8 +202,12 @@ public class OrderController {
     public String updateOrderStatus(
             @PathVariable Integer id,
             @RequestParam OrderStatusEnum status,
-            @RequestParam(required = false) String returnUrl
+            @RequestParam(required = false) String returnUrl,
+            HttpSession session
     ) {
+        if (session.getAttribute("user") == null || !session.getAttribute("userRole").equals("ADMIN")) {
+            return "access-denied"; // Redirect to access denied page if session is not valid
+        }
         try {
             orderService.updateOrderStatus(id, status);
         } catch (Exception e) {
@@ -161,7 +219,10 @@ public class OrderController {
 
     // Admin - Xóa đơn hàng
     @GetMapping("/admin/orders/{id}/delete")
-    public String deleteOrder(@PathVariable Integer id, @RequestParam(required = false) String returnUrl) {
+    public String deleteOrder(@PathVariable Integer id, @RequestParam(required = false) String returnUrl, HttpSession session) {
+        if (session.getAttribute("user") == null || !session.getAttribute("userRole").equals("ADMIN")) {
+            return "access-denied"; // Redirect to access denied page if session is not valid
+        }
         try {
             orderService.deleteOrder(id);
         } catch (Exception e) {
@@ -174,7 +235,10 @@ public class OrderController {
     // User - Xóa đơn hàng (chỉ cho phép xóa đơn Complete hoặc Cancelled)
     @PostMapping("/order/delete/{id}")
     @Transactional
-    public String deleteUserOrder(@PathVariable Integer id, @RequestParam Long userId, RedirectAttributes redirectAttributes) {
+    public String deleteUserOrder(@PathVariable Integer id, @RequestParam Long userId, RedirectAttributes redirectAttributes, HttpSession session) {
+        if (session.getAttribute("user") == null || !session.getAttribute("userRole").equals("ADMIN")) {
+            return "access-denied"; // Redirect to access denied page if session is not valid
+        }
         try {
             // Kiểm tra đơn hàng có tồn tại và thuộc về user này không
             Optional<Order> optionalOrder = orderService.getOrderById(id);

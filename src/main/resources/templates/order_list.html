@@ -54,13 +54,13 @@
                 <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">01/01/2025</td>
                 <td class="order-status" th:text="${order.status}">Đang xử lý</td>
                 <td class="order-total" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</td>
-                <td th:each="item : ${order.orderItems}">
+                <td>
                     <!-- Kiểm tra xem product có phải là null không -->
-                    <img th:if="${item.product != null and not item.product.images.isEmpty()}"
-                         th:src="@{${item.product.images[0].imageUrl}}"
+                    <img th:if="${order.orderItems.get(0) != null && !order.orderItems.get(0).getProduct().getImages().isEmpty()}"
+                         th:src="@{${order.orderItems.get(0).getProduct().getImages()[0].imageUrl}}"
                          class="product-image"
                          alt="Product Image" />
-                    <img th:if="${item.product == null or item.product.images.isEmpty()}"
+                    <img th:if="${order.orderItems.get(0) == null || order.orderItems.get(0).getProduct().getImages().isEmpty()}"
                          th:src="@{/images/placeholder.jpg}"
                          class="product-image"
                          alt="No Image" />
