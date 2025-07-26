@@ -93,8 +93,7 @@
       </a>
     </li>
     <li class="nav-item logout-item">
-      <form th:action="@{/admin/logout}" method="post" style="width: 100%;">
-        <!-- Dùng một class riêng biệt 'btn-logout' cho nút bấm -->
+      <form th:action="@{/auth/logout}" method="post" style="width: 100%;">
         <button type="submit" class="btn-logout">
           <i class="fas fa-sign-out-alt"></i>
           <span>Đăng xuất</span>

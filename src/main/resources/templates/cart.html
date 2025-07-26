@@ -207,7 +207,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="city" class="form-label">Thành phố *</label>
-                            <select id="city" name="city" class="form-control" required onchange="updateWardOptions()">
+                            <select id="city" name="city" class="form-control" required>
                                 <option value="">-- Chọn thành phố --</option>
                                 <option value="hcm">TP Hồ Chí Minh</option>
                                 <option value="hn">Hà Nội</option>
@@ -224,7 +224,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="paymentMethod" class="form-label">Phương thức thanh toán *</label>
-                            <select id="paymentMethod" name="paymentMethod" class="form-control" required onchange="showBankTransferDetails()">
+                            <select id="paymentMethod" name="paymentMethod" class="form-control" required>
                                 <option value="">-- Chọn phương thức --</option>
                                 <option value="cod">Thanh toán khi nhận hàng (COD)</option>
                                 <option value="bank">Chuyển khoản ngân hàng</option>
@@ -387,12 +387,24 @@
 
     // Debug modal functionality
     document.addEventListener('DOMContentLoaded', function() {
+        // Add event listeners for city and payment method changes
+        const citySelect = document.getElementById('city');
+        const paymentMethodSelect = document.getElementById('paymentMethod');
+        
+        if (citySelect) {
+            citySelect.addEventListener('change', updateWardOptions);
+        }
+        
+        if (paymentMethodSelect) {
+            paymentMethodSelect.addEventListener('change', showBankTransferDetails);
+        }
 
         const checkoutButton = document.querySelector('[data-bs-target="#checkoutModal"]');
         const modal = document.getElementById('checkoutModal');
 
         if (checkoutButton && modal) {
             checkoutButton.addEventListener('click', function(e) {
+                console.log('Checkout button clicked');
                 const bsModal = new bootstrap.Modal(modal);
                 bsModal.show();
 
@@ -408,28 +420,6 @@
                 // Khi modal ẩn (cả nhấn hủy, đóng, submit), trả focus về nút mở modal
                 modal.addEventListener('hidden.bs.modal', function () {
                     checkoutButton.focus();
-                }, { once: true });
-            });
-        }
-
-        const checkoutButton = document.querySelector('[data-bs-target="#checkoutModal"]');
-        const modal = document.getElementById('checkoutModal');
-        
-        if (checkoutButton && modal) {
-            checkoutButton.addEventListener('click', function(e) {
-                console.log('Checkout button clicked');
-                const bsModal = new bootstrap.Modal(modal);
-                bsModal.show();
-
-                // Đợi modal thực sự show xong mới focus
-                modal.addEventListener('shown.bs.modal', function () {
-                    // Focus vào nút đầu tiên trong modal, ví dụ:
-                    const firstButton = modal.querySelector('button, [tabindex]:not([tabindex="-1"])');
-                    if (firstButton) {
-                        firstButton.focus();
-                    } else {
-                        modal.focus();
-                    }
                 }, { once: true });
             });
         }

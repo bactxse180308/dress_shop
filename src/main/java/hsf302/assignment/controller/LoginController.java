@@ -45,7 +45,7 @@ public class LoginController {
                 session.setAttribute("user", user);
                 session.setAttribute("userId", user.getId());
                 session.setAttribute("userRole", user.getRole().toString());
-
+                session.setAttribute("user", user);
                 return (user.getRole() == UserRoleEnum.ADMIN)
                         ? "redirect:/admin/dashboard"
                         : "redirect:/home";
@@ -59,6 +59,6 @@ public class LoginController {
     @PostMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/auth/login";
+        return "redirect:/home";
     }
 }

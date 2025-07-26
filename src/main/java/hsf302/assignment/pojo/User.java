@@ -13,6 +13,8 @@ import java.util.Set;
 @Table(name = "users")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,14 +51,4 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Measurement> measurements = new LinkedHashSet<>();
 
-    // Manual getter for ID (due to Lombok issues)
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    // Other getters and setters handled by Lombok
 }

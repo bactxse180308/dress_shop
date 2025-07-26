@@ -108,7 +108,7 @@ public class OrderController {
     @GetMapping("/order/list")
     public String listOrders(@RequestParam Long userId, Model model, HttpSession session) {
         if (session.getAttribute("user") == null) {
-            return "access-denied"; // Redirect to access denied page if session is not valid
+            return "redirect:/auth/login"; // Redirect to access denied page if session is not valid
         }
         User user = userService.getUserById(userId.intValue());
 

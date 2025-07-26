@@ -18,8 +18,8 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/products?newest">SẢN PHẨM MỚI</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/order/list?userId=1">ĐƠN HÀNG</a>
+                    <li class="nav-item" th:if="${session.user != null}">
+                        <a class="nav-link" th:href="@{/order/list(userId=${session.user.id})}">ĐƠN HÀNG</a>
                     </li>
                 </ul>
 
@@ -36,18 +36,20 @@
                     <a href="#" class="text-decoration-none text-danger fs-5">
                         <i class="bi bi-heart-fill"></i>
                     </a>
-                    <div class="dropdown">
-                        <!-- 1. Đây là icon user, giờ nó sẽ là NÚT KÍCH HOẠT dropdown -->
+                    
+                    <!-- Hiển thị menu user khi đã đăng nhập -->
+                    <div class="dropdown" th:if="${session.user != null}">
+                        <!-- Icon user với dropdown menu -->
                         <a href="#" class="text-decoration-none text-dark fs-5" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person"></i>
                         </a>
 
-                        <!-- 2. Đây là MENU xổ xuống, ban đầu sẽ được ẩn đi -->
+                        <!-- Menu xổ xuống -->
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <!-- Mục "Tài khoản" -->
                             <li>
                                 <a class="dropdown-item" th:href="@{/profile}">
-                                    <i class="bi bi-person-circle me-2"></i> <!-- Thêm icon cho đẹp -->
+                                    <i class="bi bi-person-circle me-2"></i>
                                     Tài khoản của tôi
                                 </a>
                             </li>
@@ -55,16 +57,24 @@
                             <!-- Đường kẻ phân cách -->
                             <li><hr class="dropdown-divider"></li>
 
-                            <!-- Mục "Đăng xuất" (dùng form để bảo mật) -->
+                            <!-- Mục "Đăng xuất" -->
                             <li>
                                 <form th:action="@{/auth/logout}" method="post" class="d-inline">
                                     <button type="submit" class="dropdown-item">
-                                        <i class="bi bi-box-arrow-right me-2"></i> <!-- Thêm icon cho đẹp -->
+                                        <i class="bi bi-box-arrow-right me-2"></i>
                                         Đăng xuất
                                     </button>
                                 </form>
                             </li>
                         </ul>
+                    </div>
+                    
+                    <!-- Hiển thị nút đăng nhập khi chưa đăng nhập -->
+                    <div th:if="${session.user == null}">
+                        <a href="/auth/login" class="text-decoration-none text-dark fs-5 me-2">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>
+                            Đăng nhập
+                        </a>
                     </div>
 
                     <a href="http://localhost:8080/cart" class="text-decoration-none position-relative text-dark fs-5">
