@@ -25,7 +25,7 @@ public class AdminDashboardController {
         String userRole = (String) session.getAttribute("userRole");
 
         if (userId == null || userRole == null) {
-            return "redirect:/auth/login";
+            return "redirect:/login";
         }
 
         User user = userService.getUserById(userId);

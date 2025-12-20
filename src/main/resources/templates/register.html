@@ -14,7 +14,7 @@
     <p th:if="${message}" th:text="${message}" class="message"
        th:classappend="${message.startsWith('✅') ? 'text-success' : 'text-danger'}"></p>
 
-    <form th:action="@{/auth/register}" method="post">
+    <form th:action="@{/register}" method="post">
       <div class="form-group">
         <label for="name">Tên:</label>
         <input type="text" id="name" name="name" required>
@@ -45,7 +45,7 @@
 
 
     <p class="register-link">
-      Đã có tài khoản? <a th:href="@{/auth/login}">Đăng nhập ngay</a>
+      Đã có tài khoản? <a th:href="@{/login}">Đăng nhập ngay</a>
     </p>
   </div>
 </div>

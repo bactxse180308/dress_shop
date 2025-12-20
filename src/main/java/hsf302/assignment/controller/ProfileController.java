@@ -20,7 +20,7 @@ public class ProfileController {
     public String userProfile(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return "redirect:/auth/login";
+            return "redirect:/login";
         }
         model.addAttribute("user", user);
         return "profile";
@@ -30,7 +30,7 @@ public class ProfileController {
     public String editProfile(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
-            return "redirect:/auth/login";
+            return "redirect:/login";
         }
         model.addAttribute("user", user);
         return "edit-profile";
@@ -40,7 +40,7 @@ public class ProfileController {
     public String updateProfile(@ModelAttribute("user") User updatedUser, HttpSession session) {
         User currentUser = (User) session.getAttribute("user");
         if (currentUser == null) {
-            return "redirect:/auth/login";
+            return "redirect:/login";
         }
 
         updatedUser.setId(currentUser.getId());
